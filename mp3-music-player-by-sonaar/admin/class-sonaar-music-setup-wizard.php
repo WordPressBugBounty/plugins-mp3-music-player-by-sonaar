@@ -177,6 +177,7 @@ class Sonaar_Music_Setup_Wizard {
         // Define settings array outside the callbacks so it can be used in both content and form_handler
         $general_options = get_option('srmp3_settings_general', array());
         $widget_options = get_option('srmp3_settings_widget_player', array());
+        $download_options = get_option('srmp3_settings_download', array());
         $sticky_options = get_option('srmp3_settings_sticky_player', array());
         $share_options = get_option('srmp3_settings_share', array());
         $favorite_options = get_option('srmp3_settings_favorites', array());
@@ -205,6 +206,7 @@ class Sonaar_Music_Setup_Wizard {
         // Initialize the settings array
         $settings = [];
         $settings['general'] = [];
+        $settings['download'] = [];
         $settings['audiopreview'] = [];
         $settings['sticky'] = [];
         $settings['widget'] = [];
@@ -213,13 +215,13 @@ class Sonaar_Music_Setup_Wizard {
     
         // Add general and audiopreview settings if the website type is not 'radio'
         if ($website_type !== 'radio') {
-            $settings['general'] = [
+            $settings['download'] = [
                 'force_cta_download' => [
                     'icon' => 'sricon-filedownload',
                     'title' => __('Enable Download Buttons?', 'sonaar-music'),
                     'description' => __('Allow users to download the ' . $current_labels['track'] . ' file.', 'sonaar-music'),
                     'default' => 'false',
-                    'options' => $general_options,
+                    'options' => $download_options,
                 ],
             ];
             $settings['audiopreview'] = [
@@ -607,6 +609,7 @@ class Sonaar_Music_Setup_Wizard {
                 
                         $options_sections = [
                             'general' => 'srmp3_settings_general',
+                            'download' => 'srmp3_settings_download',
                             'widget' => 'srmp3_settings_widget_player',
                             'sticky' => 'srmp3_settings_sticky_player',
                             'share' => 'srmp3_settings_share',

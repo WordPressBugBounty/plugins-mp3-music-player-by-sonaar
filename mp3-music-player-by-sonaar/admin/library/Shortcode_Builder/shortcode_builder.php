@@ -311,6 +311,7 @@ class SRMP3_ShortcodeBuilder {
             'hide_metas',
             'display_control_artwork',
             'show_control_on_hover',
+            'artwork_background',
             'adaptive_colors',
             'adaptive_colors_freeze',
             'scbuilder_show_playlist',
@@ -451,6 +452,16 @@ class SRMP3_ShortcodeBuilder {
             unset($_POST['hide_times_typo']);
             unset($_POST['display_control_artwork']);
             unset($_POST['show_control_on_hover']);
+            
+            unset($_POST['artwork_background']);
+            unset($_POST['artwork_background_size']);
+            unset($_POST['artwork_set_background_hideMainImage']);
+            unset($_POST['artwork_background_blur']);
+            unset($_POST['artwork_set_background_overflow']);
+            unset($_POST['artwork_background_pos']);
+            unset($_POST['artwork_background_posx']);
+            unset($_POST['artwork_background_posy']);
+
             unset($_POST['playpause_size']);
             unset($_POST['playpause_circle_size']);
             unset($_POST['playpause_circle_border_width']);
@@ -1510,6 +1521,25 @@ class SRMP3_ShortcodeBuilder {
             
         ) );
         $shortcode_options->add_field( array(
+            'name'          => esc_html__('Image Size (px)', 'sonaar-music'),
+            'id'            => 'artwork_size',
+            'type'       	=> 'text_small',
+            'default'       => '',
+            'attributes'  => array(
+                'data-target-unit'     => 'px',
+                'data-target-selector' => ':not(.sonaar-no-artwork) .srp_player_grid{ grid-template-columns: {{VALUE}} 1fr; } .album-art{ width:{{VALUE}}; max-width: {{VALUE}}px; } .srp_player_boxed .sonaar-Artwort-box{ min-width: {{VALUE}}; }',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                    ),
+                )),
+            ),
+        ) );
+        $shortcode_options->add_field( array(
             'name'          => esc_html__('Display play button in the artwork', 'sonaar-music'),
             'id'            => 'display_control_artwork',
             'type'          => 'switch',
@@ -1517,8 +1547,15 @@ class SRMP3_ShortcodeBuilder {
             'plan_required' => 'starter',
             'before'        => array('Sonaar_Music_Admin', 'promo_ad_text_cb'),
             'attributes'  => array(
-                'data-conditional-id'    => 'hide_artwork',
-                'data-conditional-value' => 'false',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                    ),
+                )),
             ),
         ) );
         $shortcode_options->add_field( array(
@@ -1544,30 +1581,215 @@ class SRMP3_ShortcodeBuilder {
                 )),
             ),
         ) );
+       
         $shortcode_options->add_field( array(
-            'name'          => esc_html__('Image Size', 'sonaar-music'),
-            'id'            => 'artwork_size',
+            'name'          => esc_html__('Display Artwork Image in Background', 'sonaar-music'),
+            'id'            => 'artwork_background',
+            'type'          => 'switch',
+            'classes_cb'    => array('Sonaar_Music_Admin', 'pro_feature_class_cb'),
+            'plan_required' => 'starter',
+            'before'        => array('Sonaar_Music_Admin', 'promo_ad_text_cb'),
+            'attributes'  => array(
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                    ),
+                )),
+            ),
+        ) );
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('Background Image Size', 'sonaar-music'),
+            'id'            => 'artwork_background_size',
+            'type'       	=> 'text_small',
+            'default'       => '100',
+            'attributes'  => array(
+                'data-target-unit'     => '%',
+                'data-target-selector' => '.iron-audioplayer .srp-artworkbg{ background-size: {{VALUE}};}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                    ),
+                )),
+            ),
+            'classes'       => 'srmp3-settings--subitem',
+        ) );
+
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('Hide Cover Image in Front', 'sonaar-music'),
+            'id'            => 'artwork_set_background_hideMainImage',
+            'type'          => 'switch',
+            'attributes'  => array(
+                'data-target-selector' => '.iron-audioplayer .sonaar-Artwort-box{display:none;},  .iron-audioplayer .srp_player_boxed{display:block;}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                    ),
+                )),
+            ),
+            'classes'       => 'srmp3-settings--subitem',
+        ) );
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('Blur Image (px)', 'sonaar-music'),
+            'id'            => 'artwork_background_blur',
             'type'       	=> 'text_small',
             'default'       => '',
             'attributes'  => array(
                 'data-target-unit'     => 'px',
-                'data-target-selector' => ':not(.sonaar-no-artwork) .srp_player_grid{ grid-template-columns: {{VALUE}} 1fr; } .album-art{ width:{{VALUE}}; max-width: {{VALUE}}px; } .srp_player_boxed .sonaar-Artwort-box{ min-width: {{VALUE}}; }',
-                'data-conditional-id'    => 'hide_artwork',
-                'data-conditional-value' => 'false', 
+                'data-target-selector' => '.iron-audioplayer .srp-artworkbg{ filter: blur({{VALUE}});}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                    ),
+                )),
             ),
+            'classes'       => 'srmp3-settings--subitem',
         ) );
 
-         
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('Hide Blur Overflow', 'sonaar-music'),
+            'id'            => 'artwork_set_background_overflow',
+            'type'          => 'switch',
+            'attributes'  => array(
+                'data-target-selector' => '.iron-audioplayer {overflow:hidden;},  .iron-audioplayer .srp_player_boxed{display:block;}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                    ),
+                )),
+            ),
+            'classes'       => 'srmp3-settings--subitem',
+        ) );
         
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('Background Position', 'sonaar-music'),
+            'id'            => 'artwork_background_pos',
+            'type'              => 'select',
+            'show_option_none'  => false,
+            'options'           => array(
+                '' => esc_html_x( 'Default', 'Background Control', 'sonaar-music' ),
+                'center center' => esc_html_x( 'Center Center', 'Background Control', 'sonaar-music' ),
+                'center left' => esc_html_x( 'Center Left', 'Background Control', 'sonaar-music' ),
+                'center right' => esc_html_x( 'Center Right', 'Background Control', 'sonaar-music' ),
+                'top center' => esc_html_x( 'Top Center', 'Background Control', 'sonaar-music' ),
+                'top left' => esc_html_x( 'Top Left', 'Background Control', 'sonaar-music' ),
+                'top right' => esc_html_x( 'Top Right', 'Background Control', 'sonaar-music' ),
+                'bottom center' => esc_html_x( 'Bottom Center', 'Background Control', 'sonaar-music' ),
+                'bottom left' => esc_html_x( 'Bottom Left', 'Background Control', 'sonaar-music' ),
+                'bottom right' => esc_html_x( 'Bottom Right', 'Background Control', 'sonaar-music' ),
+                'initial' => esc_html_x( 'Custom', 'Background Control', 'sonaar-music' ),
+            ),
+            'default'           => '',
+            'attributes'  => array(
+                'data-target-selector' => '.iron-audioplayer .srp-artworkbg{ background-position:{{VALUE}};}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                    ),
+                )),
+            ),
+            'classes'       => 'srmp3-settings--subitem',
+        ) );
 
-
-
-
-
-
-
-
-
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('X Position', 'sonaar-music'),
+            'id'            => 'artwork_background_posx',
+            'type'       	=> 'text_small',
+            'default'       => '',
+            'attributes'  => array(
+                'data-target-unit'     => 'px',
+                'data-target-selector' => '.iron-audioplayer .srp-artworkbg{ background-position-x: {{VALUE}};}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                        array(
+                            'id'    => 'artwork_background_pos',
+                            'value' => 'initial'
+                        ),
+                    ),
+                )),
+            ),
+            'classes'       => 'srmp3-settings--subitem',
+        ) );
+        $shortcode_options->add_field( array(
+            'name'          => esc_html__('Y Position', 'sonaar-music'),
+            'id'            => 'artwork_background_posy',
+            'type'       	=> 'text_small',
+            'default'       => '',
+            'attributes'  => array(
+                'data-target-unit'     => 'px',
+                'data-target-selector' => '.iron-audioplayer .srp-artworkbg{ background-position-y: {{VALUE}};}',
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_artwork',
+                            'value' => 'false'
+                        ),
+                        array(
+                            'id'    => 'artwork_background',
+                            'value' => 'true'
+                        ),
+                        array(
+                            'id'    => 'artwork_background_pos',
+                            'value' => 'initial'
+                        ),
+                    ),
+                )),
+            ),
+            'classes'       => 'srmp3-settings--subitem',
+        ) );
 
         /**
          *  META
@@ -1599,8 +1821,16 @@ class SRMP3_ShortcodeBuilder {
             ),
             'attributes'  => array(
                 'data-target-selector' => '.srp_meta, .srp_meta.album-title',
-                'data-conditional-id'    => 'hide_metas',
-                'data-conditional-value' => 'false', 
+                'data-conditional' => wp_json_encode(array(
+                    'logic' => 'AND', // Could be 'OR'
+                    'conditions' => array(
+                        array(
+                            'id'    => 'hide_metas',
+                            'value' => 'false'
+                        ),
+                    
+                    ),
+                )),
             ),
         ) );
         $player_meta_group = $shortcode_options->add_field( array(
@@ -1824,7 +2054,7 @@ class SRMP3_ShortcodeBuilder {
                 'alpha'         => true,
             ),
             'attributes'  => array(
-                'data-target-selector' => '.srp_player_boxed, .skin_floated .album-player {background-color:{{VALUE}};}',
+                'data-target-selector' => '.srp_player_boxed, .skin_floated .album-player, .srp-artworkbg{background-color:{{VALUE}};}',
                 'data-conditional-id'    => 'show_mini_player',
                 'data-conditional-value' => 'true',
                 'data-colorpicker' => setDefaultColorPalettes(),

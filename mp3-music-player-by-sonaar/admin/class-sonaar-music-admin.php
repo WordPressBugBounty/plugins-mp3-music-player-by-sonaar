@@ -1146,124 +1146,7 @@ class Sonaar_Music_Admin {
                         'data-conditional-value' => 'true',
                     ),
                 ) ); 
-                $general_options->add_field( array(
-                    'name'          => esc_html__('Download Buttons', 'sonaar-music'),
-                    'type'          => 'title',
-                    'id'            => 'force_cta_download_settings_title'
-                ) );
-                $general_options->add_field( array(
-                    'name'          => esc_html__('Download Button Label', 'sonaar-music'),
-                    'id'            => 'force_cta_download_label',
-                    'type'          => 'text_small',
-                    'default'       => esc_html__('Download', 'sonaar-music'),
-                    'attributes'    => array(
-                        'placeholder' => 'Download',
-                    ),
-                ) );
-                $general_options->add_field( array(
-                    'name'          => esc_html__('Add Download Button for each Track', 'sonaar-music'),
-                    'id'            => 'force_cta_download',
-                    'type'          => 'switch',
-                    'label_cb'      => 'srmp3_add_tooltip_to_label',
-                    'tooltip'       => array(
-                        'title'     => '',
-                        'text'      => esc_html__('A Download Button will be added for each audio track, allowing users to download their audio files by simply clicking the button.', 'sonaar-music'),
-                        'image'     => '',
-                    ),
-                ) );
-                if ( get_site_option('SRMP3_ecommerce') == '1'){
-                    $general_options->add_field( array(
-                        'name'          => esc_html__('Enable Dynamic Visibility', 'sonaar-music'),
-                        'id'            => 'cta_dl_dv_enable_main_settings',
-                        'type'          => 'switch',
-                        'label_cb'      => 'srmp3_add_tooltip_to_label',
-                        'tooltip'       => array(
-                            'title'     => '',
-                            'text'      => esc_html__('Control visibility of the Download buttons according to different conditions', 'sonaar-music'),
-                            'image'     => '',
-                        ),
-                    ) );
-                    $general_options->add_field( array(
-                        'name'          => esc_html__('Visibility State', 'sonaar-music'),
-                        'classes'       => 'srmp3-settings--subitem',
-                        'id'            => 'cta_dl_dv_state_main_settings',
-                        'type'          => 'select',
-                        'options' 						=> [
-                            '' 							=> __( 'Select a State', 'sonaar-music' ),
-                            'show' 						=> __( 'Show button if condition met', 'sonaar-music' ),
-                            'hide' 						=> __( 'Hide button if condition met', 'sonaar-music' ),
-                        ],
-                        'attributes'    => array(
-                            'data-conditional-id'    => 'cta_dl_dv_enable_main_settings',
-                            'data-conditional-value' => 'true',
-                        ),
-                        'default'       => ''
-                    ) );
-                    $general_options->add_field( array(
-                        'name'          => esc_html__('Visibility Condition', 'sonaar-music'),
-                        'classes'       => 'srmp3-settings--subitem',
-                        'id'            => 'cta_dl_dv_condition_main_settings',
-                        'type'          => 'select',
-                        'options' 						=> [
-                            '' 							=> __( 'Select Condition', 'sonaar-music' ),
-                            'user_logged_in' 			=> __( 'User logged in', 'sonaar-music' ),
-                            'user_logged_out' 			=> __( 'User logged out', 'sonaar-music' ),
-                            'user_role_is' 				=> __( 'User Role is', 'sonaar-music' ),
-                        ],
-                        'attributes'    => array(
-                            'data-conditional-id'    => 'cta_dl_dv_enable_main_settings',
-                            'data-conditional-value' => 'true',
-                        ),
-                        'default'       => ''
-                    ) ); 
-                    
-                    $general_options->add_field( array(
-                        'name'          => esc_html__('Role is', 'sonaar-music'),
-                        'classes'       => 'srmp3-settings--subitem srmp3-settings--subitem2',
-                        'id'            => 'cta_dl_dv_role_main_settings',
-                        'type'          => 'multicheck',
-                        'options'       => Sonaar_Music::get_user_roles(),
-                        'attributes'  => array(
-                            'data-conditional-id'    => 'cta_dl_dv_condition_main_settings',
-                            'data-conditional-value' => wp_json_encode( array( 'user_role_is' ) ),
-                            
-                        ),
-                        'default'       => ''
-                    ) );
-                    $general_options->add_field( array(
-                        'name'          => esc_html__('If condition NOT met, enable redirection on button click', 'sonaar-music'),
-                        'classes'       => 'srmp3-settings--subitem',
-                        'id'            => 'cta_dl_dv_enable_redirect_main_settings',
-                        'type'          => 'switch',
-                        'label_cb'      => 'srmp3_add_tooltip_to_label',
-                        'tooltip'       => array(
-                            'title'     => '',
-                            'text'      => esc_html__( 'If user is logged out or not met the conditions, display the button but redirect people to a link or popup', 'sonaar-music'),
-                            'image'     => '',
-                        ),
-                        'attributes'    => array(
-                            'data-conditional-id'    => 'cta_dl_dv_enable_main_settings',
-                            'data-conditional-value' => 'true',
-                        ),
-                    ) );
-                    $general_options->add_field( array(
-                        'name'          => esc_html__('Redirection URL', 'sonaar-music'),
-                        'classes'       => 'srmp3-settings--subitem srmp3-settings--subitem2',
-                        'id'            => 'cta_dl_dv_redirection_url_main_settings',
-                        'type'          => 'text_medium',
-                        'label_cb'      => 'srmp3_add_tooltip_to_label',
-                        'tooltip'       => array(
-                            'title'     => '',
-                            'text'      => esc_html__('The URL to redirect when user click on the button. If you are using Elementor Popup, set this to #popup and in the Advanced Tab of your Popup > Open By Selector create an anchor trigger link shortcode (example: a[href="#popup"] )', 'sonaar-music'),
-                            'image'     => '',
-                        ),
-                        'attributes'    => array(
-                            'placeholder'            => 'https://yourdomain.com/login',
-                            'data-conditional-id'    => 'cta_dl_dv_enable_redirect_main_settings',
-                            'data-conditional-value' => 'true',
-                        ),
-                    ) );
-                }
+                
                 $general_options->add_field( array(
                     'name'          => esc_html__('View Details Buttons', 'sonaar-music'),
                     'type'          => 'title',
@@ -2650,8 +2533,30 @@ class Sonaar_Music_Admin {
                         ),
                     ) );
 
-
-
+                    $sticky_player_options->add_field( array(
+                        'name'          => esc_html__('Mobile Sticky Player', 'sonaar-music'),
+                        'type'          => 'title',
+                        'id'            => 'music_player_sticky_mobile_title'
+                    ) );
+                    $sticky_player_options->add_field( array(
+                        'name'          => esc_html__('Display Previous Button in Mobile Sticky Bar Player', 'sonaar-music'),
+                        'id'            => 'sticky_mobile_show_previous',
+                        'type'          => 'switch',
+                        'default'       => '',
+                    ) );
+                    $sticky_player_options->add_field( array(
+                        'name'          => esc_html__('Display Next Button in Mobile Sticky Bar Player', 'sonaar-music'),
+                        'id'            => 'sticky_mobile_show_next',
+                        'type'          => 'switch',
+                        'default'       => '',
+                    ) );
+                    $sticky_player_options->add_field( array(
+                        'name'          => esc_html__('Display Tracklist Button in Mobile Sticky Bar  Player', 'sonaar-music'),
+                        'id'            => 'sticky_mobile_show_tracklist',
+                        'type'          => 'switch',
+                        'default'       => '',
+                    ) );
+                    
 
                     $sticky_player_options->add_field( array(
                         'name'          => esc_html__('Sticky Player Typography and Colors', 'sonaar-music'),
@@ -3085,6 +2990,428 @@ class Sonaar_Music_Admin {
                     ) );
             }
 
+
+
+
+
+
+
+                /**
+                * Registers fifth options page, and set main item as parent.
+                */
+                $args = array(
+                    'id'           => 'srmp3_settings_download',
+                    'menu_title'   => esc_html__( 'Download Buttons', 'sonaar-music' ),
+                    'title'        => esc_html__( 'Download Buttons', 'sonaar-music' ),
+                    'object_types' => array( 'options-page' ),
+                    'option_key'   => 'srmp3_settings_download',
+                    'parent_slug'  => 'edit.php?post_type=' . SR_PLAYLIST_CPT,
+                    'tab_group'    => 'yourprefix_main_options',
+                    'tab_title'    => esc_html__( 'Download Buttons', 'sonaar-music' ),
+                );
+
+                // 'tab_group' property is supported in > 2.4.0.
+                if ( version_compare( CMB2_VERSION, '2.4.0' ) ) {
+                    $args['display_cb'] = 'yourprefix_options_display_with_tabs';
+                }
+
+                $download_options = new_cmb2_box( $args );
+                array_push($options_name, $download_options);
+                
+                $download_options->add_field( array(
+                    'classes'       => 'srmp3-pro-feature',
+                    'name'          => esc_html__('Download Buttons', 'sonaar-music'),
+                    'type'          => 'title',
+                    'id'            => 'force_cta_download_settings_title',
+                    'after'         => array($this, 'promo_ad_text_cb'),
+                    'plan_required'      => 'starter',
+                    
+                ) );
+                if ( !function_exists( 'run_sonaar_music_pro' ) ){
+                    $download_options->add_field( array(
+                        'classes'       => 'srmp3-pro-feature',
+                        'name'          => esc_html__('Download Button Label', 'sonaar-music'),
+                        'id'            => 'promo_force_cta_download_label',
+                        'type'          => 'text_small',
+                        'default'       => esc_html__('Download', 'sonaar-music'),
+                        'label_cb'      => 'srmp3_add_tooltip_to_label',
+                        'tooltip'       => array(
+                            'title'     => '',
+                            'text'      => esc_html__('Label of your Download Button', 'sonaar-music'),
+                            'image'     => '',
+                            'pro'       => true,
+                        ),
+                    ) );
+                    $download_options->add_field( array(
+                        'classes'       => 'srmp3-pro-feature',
+                        'name'          => esc_html__('Automatically Add Download Button for each Track', 'sonaar-music'),
+                        'id'            => 'promo_force_cta_download',
+                        'type'          => 'switch',
+                        'plan_required' => 'starter',
+                        'before'        => array('Sonaar_Music_Admin', 'promo_ad_text_cb'),
+                        'options' => array(
+                            'textpromo' => esc_html__('Pro [Starter]', 'sonaar-music'),
+                        ),
+                        'label_cb'      => 'srmp3_add_tooltip_to_label',
+                        'tooltip'       => array(
+                            'title'     => '',
+                            'text'      => esc_html__('A Download Button will be added for each audio track, allowing users to download their audio files by simply clicking the button.', 'sonaar-music'),
+                            'image'     => '',
+                            'pro'       => true,
+                        ),
+                    ) );
+                    $download_options->add_field( array(
+                        'classes'       => 'srmp3-pro-feature',
+                        'name'          => esc_html__('Ask for Email in exchange of a download', 'sonaar-music'),
+                        'id'            => 'promo_force_cta_download_askforemail',
+                        'type'          => 'switch',
+                        'plan_required' => 'business',
+                        'before'        => array('Sonaar_Music_Admin', 'promo_ad_text_cb'),
+                        'options' => array(
+                            'textpromo' => esc_html__('Pro [Business]', 'sonaar-music'),
+                        ),
+                        'label_cb'      => 'srmp3_add_tooltip_to_label',
+                        'tooltip'       => array(
+                            'title'     => '',
+                            'text'      => esc_html__('This feature lets admins collect user emails in exchange for providing a file download. To active this, enable Dynamic Visibility on your download button (see settings above) and choose "Otherwise, Ask for an Email and Serve the File" option.', 'sonaar-music'),
+                            'image'     => '',
+                            'pro'       => true,
+                        ),
+                    ) );
+                    
+                }
+              
+                if (function_exists( 'run_sonaar_music_pro' )){
+                    $download_options->add_field( array(
+                        'name'          => esc_html__('Download Button Label', 'sonaar-music'),
+                        'id'            => 'force_cta_download_label',
+                        'type'          => 'text_small',
+                        'default'       => esc_html__('Download', 'sonaar-music'),
+                        'attributes'    => array(
+                            'placeholder' => 'Download',
+                        ),
+                    ) );
+                    $download_options->add_field( array(
+                        'name'          => esc_html__('Add Download Button for each Track', 'sonaar-music'),
+                        'id'            => 'force_cta_download',
+                        'type'          => 'switch',
+                        'label_cb'      => 'srmp3_add_tooltip_to_label',
+                        'tooltip'       => array(
+                            'title'     => '',
+                            'text'      => esc_html__('A Download Button will be added for each audio track, allowing users to download their audio files by simply clicking the button.', 'sonaar-music'),
+                            'image'     => '',
+                        ),
+                    ) );
+                    if ( get_site_option('SRMP3_ecommerce') !== '1' || !get_site_option('sonaar_music_licence')){
+                        $download_options->add_field( array(
+                            'classes'       => 'srmp3-pro-feature',
+                            'name'          => esc_html__('Ask for Email in exchange of a download', 'sonaar-music'),
+                            'id'            => 'promo_force_cta_download_askforemail',
+                            'type'          => 'switch',
+                            'plan_required' => 'business',
+                            'before'        => array('Sonaar_Music_Admin', 'promo_ad_text_cb'),
+                            'options' => array(
+                                'textpromo' => esc_html__('Pro [Business]', 'sonaar-music'),
+                            ),
+                            'label_cb'      => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'title'     => '',
+                                'text'      => esc_html__('This feature lets admins collect user emails in exchange for providing a file download. To active this, enable dynamic visibility on your download button (see settings above) and choose "Otherwise, Ask for an Email and Serve the File" option.', 'sonaar-music'),
+                                'image'     => '',
+                                'pro'       => true,
+                            ),
+                        ) );
+                    }
+                    if ( get_site_option('SRMP3_ecommerce') == '1' && get_site_option('sonaar_music_licence')){
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Enable Dynamic Visibility', 'sonaar-music'),
+                            'id'            => 'cta_dl_dv_enable_main_settings',
+                            'type'          => 'switch',
+                            'label_cb'      => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'title'     => '',
+                                'text'      => esc_html__('Control visibility of the Download buttons according to different conditions', 'sonaar-music'),
+                                'image'     => '',
+                            ),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Visibility State', 'sonaar-music'),
+                            'classes'       => 'srmp3-settings--subitem',
+                            'id'            => 'cta_dl_dv_state_main_settings',
+                            'type'          => 'select',
+                            'options' 						=> [
+                                '' 							=> __( 'Select a State', 'sonaar-music' ),
+                                'show' 						=> __( 'Show Download buttons if', 'sonaar-music' ),
+                                'hide' 						=> __( 'Hide Download buttons if', 'sonaar-music' ),
+                            ],
+                            'attributes'    => array(
+                                'data-conditional-id'    => 'cta_dl_dv_enable_main_settings',
+                                'data-conditional-value' => 'true',
+                            ),
+                            'default'       => ''
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Visibility Condition', 'sonaar-music'),
+                            'classes'       => 'srmp3-settings--subitem',
+                            'id'            => 'cta_dl_dv_condition_main_settings',
+                            'type'          => 'select',
+                            'options' 						=> [
+                                '' 							=> __( 'Select Condition', 'sonaar-music' ),
+                                'user_logged_in' 			=> __( 'User logged in', 'sonaar-music' ),
+                                'user_logged_out' 			=> __( 'User logged out', 'sonaar-music' ),
+                                'user_role_is' 				=> __( 'User Role is', 'sonaar-music' ),
+                            ],
+                            'attributes'    => array(
+                                'data-conditional-id'    => 'cta_dl_dv_enable_main_settings',
+                                'data-conditional-value' => 'true',
+                            ),
+                            'default'       => ''
+                        ) ); 
+                        
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Role is', 'sonaar-music'),
+                            'classes'       => 'srmp3-settings--subitem srmp3-settings--subitem2',
+                            'id'            => 'cta_dl_dv_role_main_settings',
+                            'type'          => 'multicheck',
+                            'options'       => Sonaar_Music::get_user_roles(),
+                            'attributes'  => array(
+                                'data-conditional-id'    => 'cta_dl_dv_condition_main_settings',
+                                'data-conditional-value' => wp_json_encode( array( 'user_role_is' ) ),
+                                
+                            ),
+                            'default'       => ''
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Otherwise', 'sonaar-music'),
+                            'classes'       => 'srmp3-settings--subitem',
+                            'id'            => 'cta_dl_dv_condition_not_met_action',
+                            'type'          => 'select',
+                            'options' 						=> [
+                                '' 							=> __( 'Otherwise, Hide the Download Button', 'sonaar-music' ),
+                                'redirect' 			        => __( 'Otherwise, Redirect the Download Button', 'sonaar-music' ),
+                                'askemail' 			        => __( 'Otherwise, Ask for an Email and Serve the File', 'sonaar-music' ),
+                            ],
+                            'attributes'    => array(
+                                'data-conditional-id'    => 'cta_dl_dv_enable_main_settings',
+                                'data-conditional-value' => 'true',
+                            ),
+                            'default'       => ''
+                        ) ); 
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Redirection URL', 'sonaar-music'),
+                            'classes'       => 'srmp3-settings--subitem srmp3-settings--subitem2',
+                            'id'            => 'cta_dl_dv_redirection_url_main_settings',
+                            'type'          => 'text_medium',
+                            'label_cb'      => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'title'     => '',
+                                'text'      => esc_html__('The URL to redirect when user click on the button. If you are using Elementor Popup, set this to #popup and in the Advanced Tab of your Popup > Open By Selector create an anchor trigger link shortcode (example: a[href="#popup"] )', 'sonaar-music'),
+                                'image'     => '',
+                            ),
+                            'attributes'    => array(
+                                'placeholder'            => 'https://yourdomain.com/login',
+                                'data-conditional-id'    => 'cta_dl_dv_condition_not_met_action',
+                                'data-conditional-value' => wp_json_encode( array( 'redirect' ) ),
+                            ),
+                        ) );
+                    }
+
+                    if ( get_site_option('SRMP3_ecommerce') == '1' && get_site_option('sonaar_music_licence')){
+                        
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Ask for Email Settings', 'sonaar-music'),
+                            'desc'          => esc_html__('This feature lets admins collect user emails in exchange for providing a file download. To active this, enable dynamic visibility on your download button (see settings above) and choose "Otherwise, Ask for an Email and Serve the File" option.', 'sonaar-music'),
+                            'type'          => 'title',
+                            'id'            => 'download_settings_afe_heading',
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Ask for Email Button Label', 'sonaar-music'),
+                            'id'            => 'download_settings_afe_button_label',
+                            'type'          => 'text_medium',
+                            'default'       => esc_html__('Free Download', 'sonaar-music'),
+                            'attributes'    => array( 'placeholder' => esc_html__( 'Free Download', 'sonaar-music' ) ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Label displayed in button when download condition meet', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Ask for Email Form Title', 'sonaar-music'),
+                            'id'            => 'download_settings_afe_form_title',
+                            'type'          => 'text_medium',
+                            'default'       => esc_html__('Unlock Your Free Download', 'sonaar-music'),
+                            'attributes'    => array( 'placeholder' => esc_html__( 'Unlock Your Free Download', 'sonaar-music' ) ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Main title of the user\'s form', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Ask for Email Form Description', 'sonaar-music'),
+                            'id'            => 'download_settings_afe_form_desc',
+                            'type'          => 'wysiwyg',
+                            'default'       => __('Enter your email address and full name to unlock your free download. We will send the <strong>{{track_title}}</strong>\'s file to your email address.', 'sonaar-music'),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Sub heading of the user\'s form. You can use also the following dynamic variables: {{track_title}}', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                            'options' => array(
+                                'textarea_rows' => get_option('default_post_edit_rows', 5),
+                                'media_buttons' => false,
+                            ),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Ask for Email Form', 'sonaar-music'),
+                            'id'            => 'download_settings_afe_form_markup',
+                            'type'          => 'textarea_code',
+                            'default'       => __('
+<p>
+<label for="user_firstname">First Name:</label>
+<input type="text" id="user_firstname" name="user_firstname" required>
+<label for="user_lastname">Last Name:</label>
+<input type="text" id="user_lastname" name="user_lastname" required>
+<label for="user_email">Email Address:</label>
+<input type="email" id="user_email" name="user_email" required>
+</p>
+<p>
+<button type="submit" class="button alt">Send</button>
+</p>', 'sonaar-music'),
+                        'after'         => 'srmp3_add_tooltip_to_label',   
+                        'tooltip'       => array(
+                                'text'      => esc_html__('Customize the form. You can use also the following dynamic variables: {track_title}, {post_id}, {image_src}', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ));
+                        
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('How to deliver the download file?', 'sonaar-music'),
+                            'id'            => 'download_settings_afe_deliver_method',
+                            'type'          => 'select',
+                            'options' 						=> [
+                                'direct_download' 			=> __( 'Direct Download', 'sonaar-music' ),
+                                'send_email' 			    => __( 'Send by Email', 'sonaar-music' ),
+                            ],
+                            'default'       => 'direct_download',
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('When the user fill the form, how do you want the file to be delivered?', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                    
+                        $download_options->add_field( array(
+                            'name'    => esc_html__('Form Success Notice', 'sonaar-music'),
+                            'id'      => 'download_settings_afe_direct_download_markup',
+                            'classes' => 'srmp3-settings--subitem',
+                            'type'    => 'wysiwyg',
+                            'after_field'  => '<input type="hidden" data-conditional-id="download_settings_afe_deliver_method" data-conditional-value="direct_download">',  
+                            'default' => __( '<h3>Thank you {{user_firstname}},</h3>
+                        
+                                Here is your free download link for <strong>{{track_title}}</strong>
+
+                                <a class="srp_button" href="{{download_link}}" target="_blank" rel="noopener">Download Now</a>
+                                
+                                ', 'sonaar-music' ),
+                            'options' => array(
+                                'textarea_rows' => get_option('default_post_edit_rows', 10),
+                                'media_buttons' => false,
+                            ),
+                            'desc'    => '<strong>{{track_title}}</strong> - ' . __('Track Title of the Download File', 'sonaar-music') . '<br>
+                            <strong>{{download_link}}</strong> - ' . __('The Download URL', 'sonaar-music') . '<br>
+                            <strong>{{user_email}}</strong> - ' . __('The Email of the user', 'sonaar-music') . '<br>
+                            <strong>{{user_firstname}}</strong> - ' . __('User first name', 'sonaar-music') . '<br>
+                            <strong>{{user_lastname}}</strong> - ' . __('User last name', 'sonaar-music') . '<br>
+                            <strong>{{admin_firstname}}</strong> - ' . __('First name of the admin.', 'sonaar-music') . '<br>
+                            <strong>{{admin_lastname}}</strong> - ' . __('Last name of the admin.', 'sonaar-music') . '<br>
+                            <strong>{{admin_email}}</strong> - ' . __('Admin Email Address.', 'sonaar-music') . '<br>
+                            <strong>{{website_url}}</strong> - ' . __('The URL of your Website', 'sonaar-music') . '<br>
+                            <strong>{{website_name}}</strong> - ' . __('The name of your website.', 'sonaar-music'),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'          => esc_html__('Form Success Notice', 'sonaar-music'),
+                            'id'            => 'download_settings_afe_success_email',
+                            'classes'       => 'srmp3-settings--subitem',
+                            'type'          => 'wysiwyg',
+                            'default'       => __('<h3>Thanks {{user_firstname}},</h3>
+
+                            We\'ve just sent the download link to your email address.', 'sonaar-music'),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Notice to the user when the form has successfully been sent', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                            'options' => array(
+                                'textarea_rows' => get_option('default_post_edit_rows', 3),
+                                'media_buttons' => false,
+                            ),
+                            'after_field'  => '<input type="hidden" data-conditional-id="download_settings_afe_deliver_method" data-conditional-value="send_email">',
+                            'desc'    => '<strong>{{track_title}}</strong> - ' . __('Track Title of the Download File', 'sonaar-music') . '<br>
+                            <strong>{{download_link}}</strong> - ' . __('The Download URL', 'sonaar-music') . '<br>
+                            <strong>{{user_email}}</strong> - ' . __('The Email of the user', 'sonaar-music') . '<br>
+                            <strong>{{user_firstname}}</strong> - ' . __('User first name', 'sonaar-music') . '<br>
+                            <strong>{{user_lastname}}</strong> - ' . __('User last name', 'sonaar-music') . '<br>
+                            <strong>{{admin_firstname}}</strong> - ' . __('First name of the admin.', 'sonaar-music') . '<br>
+                            <strong>{{admin_lastname}}</strong> - ' . __('Last name of the admin.', 'sonaar-music') . '<br>
+                            <strong>{{admin_email}}</strong> - ' . __('Admin Email Address.', 'sonaar-music') . '<br>
+                            <strong>{{website_url}}</strong> - ' . __('The URL of your Website', 'sonaar-music') . '<br>
+                            <strong>{{website_name}}</strong> - ' . __('The name of your website.', 'sonaar-music'),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'    => esc_html__('Email Subject', 'sonaar-music'),
+                            'id'      => 'download_settings_afe_email_subject',
+                            'classes' => 'srmp3-settings--subitem',
+                            'type'    => 'text',
+                            'default' => esc_html__('Download Link of {{track_title}}', 'sonaar-music'),
+                            'attributes'    => array(
+                                'data-conditional-id'    => 'download_settings_afe_deliver_method',
+                                'data-conditional-value' => wp_json_encode( array( 'send_email' ) ),
+                            ),
+                        ) );
+                        $download_options->add_field( array(
+                            'name'    => esc_html__('Email Markup', 'sonaar-music'),
+                            'id'      => 'download_settings_afe_email_markup',
+                            'classes' => 'srmp3-settings--subitem',
+                            'type'    => 'wysiwyg',
+                            'desc'    => '<strong>{{track_title}}</strong> - ' . __('Track Title of the Download File', 'sonaar-music') . '<br>
+                            <strong>{{download_link}}</strong> - ' . __('The Download URL', 'sonaar-music') . '<br>
+                            <strong>{{user_email}}</strong> - ' . __('The email of the user', 'sonaar-music') . '<br>
+                            <strong>{{user_firstname}}</strong> - ' . __('User first name', 'sonaar-music') . '<br>
+                            <strong>{{user_lastname}}</strong> - ' . __('User last name', 'sonaar-music') . '<br>
+                            <strong>{{admin_firstname}}</strong> - ' . __('First name of the admin.', 'sonaar-music') . '<br>
+                            <strong>{{admin_lastname}}</strong> - ' . __('Last name of the admin.', 'sonaar-music') . '<br>
+                            <strong>{{admin_email}}</strong> - ' . __('Admin Email Address', 'sonaar-music') . '<br>
+                            <strong>{{website_url}}</strong> - ' . __('The URL of your Website', 'sonaar-music') . '<br>
+                            <strong>{{website_name}}</strong> - ' . __('The name of your website.', 'sonaar-music'),
+                            'after_field'  => '<input type="hidden" data-conditional-id="download_settings_afe_deliver_method" data-conditional-value="send_email">',
+                            'options' => array(
+                                'textarea_rows' => get_option('default_post_edit_rows', 20), // rows="..."
+                            ),
+                            
+                            'default' => __( 'Hello {{user_firstname}},
+                        
+                        Thank you for providing your email. Here is your free download link for <strong>{{track_title}}</strong><br>
+                        <a href="{{download_link}}" download>Download Now</a>
+                        <br><br>
+                        Enjoy!
+                        <br>
+                        {{admin_firstname}} {{admin_lastname}}
+                        <a href="{{website_url}}" download>{{website_name}}</a>
+                        ', 'sonaar-music' )
+                        ) );
+                    
+                    }
+                }
+
+
+
                 /**
                 * TEXT TO SPEECH HOOK
                 */
@@ -3169,7 +3496,7 @@ class Sonaar_Music_Admin {
                         ) );
                         $woocommerce_options->add_field( array(
                             'classes'       => 'srmp3-pro-feature',
-                            'name'          => esc_html__('Enable Music Licenses & Contracts Post Type', 'sonaar-music'),
+                            'name'          => esc_html__('Enable Music Licenses & Contracts', 'sonaar-music'),
                             'id'            => 'promo_wc_enable_licenses_cpt',
                             'type'          => 'switch',
                             'default'       => 'false',
@@ -3177,6 +3504,19 @@ class Sonaar_Music_Admin {
                             'tooltip'       => array(
                                 'title'     => esc_html__('', 'sonaar-music'),
                                 'text'      => esc_html__('This will enable the Music Licenses & Contracts custom post type used to sell music license with product variation in WooCommerce', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'classes'       => 'srmp3-pro-feature',
+                            'name'          => esc_html__('Enable Make an Offer Buttons', 'sonaar-music'),
+                            'id'            => 'promo_wc_enable_offer',
+                            'type'          => 'switch',
+                            'default'       => 'false',
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'title'     => esc_html__('', 'sonaar-music'),
+                                'text'      => esc_html__('This will add Make an Offer / Negotiate Price buttons on your product so the visitor can submit a price offer for your audio files.', 'sonaar-music'),
                                 'pro'       => true,
                             ),
                         ) );
@@ -3678,6 +4018,194 @@ class Sonaar_Music_Admin {
                                 'data-conditional-value' => wp_json_encode( array( 'before', 'after', 'before_rating','after_price', 'after_add_to_cart', 'before_excerpt', 'after_excerpt', 'before_meta', 'after_meta', 'after_summary' ) ),
                             ),
                         ) );
+
+                        
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Make an Offer / Negotiate the Price ', 'sonaar-music'),
+                            'type'          => 'title',
+                            'id'            => 'sr_woo_make_offer_setting_heading',
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('The "Make an Offer" button allows customers to submit a price they are willing to pay for a product, offering more flexibility in pricing. It will appear both in the variation lightbox and on the individual product page, giving users the option to negotiate directly from these areas.', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Display "Make an Offer" Button by default for all products', 'sonaar-music'),
+                            'id'            => 'sr_woo_make_offer_force_all',
+                            'type'          => 'switch',
+                            'default'       => '',
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'title'     => esc_html__('', 'sonaar-music'),
+                                'text'      => esc_html__('This will enable the Make an Offer Button on each of your product automatically. The button will appear both in the variation lightbox and on the individual product page. This setting can be overridden on a per-product basis when editing it.', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                       
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Make an Offer Button Label', 'sonaar-music'),
+                            'id'            => 'makeanoffer_button_label',
+                            'type'          => 'text_medium',
+                            'default'       => esc_html__('Make an offer', 'sonaar-music'),
+                            'attributes'    => array( 'placeholder' => esc_html__( 'Make an Offer or Negotiate Price', 'sonaar-music' ) ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Label displayed in button to launch the Make An Offer form modal.', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Default Minimum Price Offer', 'sonaar-music'),
+                            'id'            => 'makeanoffer_min_price',
+                            'type'          => 'text_small',
+                            'default'       => esc_html__('0', 'sonaar-music'),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'attributes' => array(
+                                'type' => 'number',
+                                'pattern' => '\d*',
+                            ),
+                            'tooltip'       => array(
+                                'text'      => esc_html__('You can set a minimum price required for each product by editing the product in WordPress. If no minimum price is specified, this default value will apply.', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Minimum Price not reach notice', 'sonaar-music'),
+                            'id'            => 'makeanoffer_failed_price',
+                            'type'          => 'text',
+                            'default'       => esc_html__('The offer price must be at least:', 'sonaar-music'),
+                            'attributes'    => array( 'placeholder' => esc_html__( 'The offer price must be at least', 'sonaar-music' ) ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('If the minimum price has not been reached, we diplay a notice to the user. This is the notice we will be displaying', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Make an Offer Form Title', 'sonaar-music'),
+                            'id'            => 'makeanoffer_form_title',
+                            'type'          => 'text_medium',
+                            'default'       => esc_html__('Submit a new offer', 'sonaar-music'),
+                            'attributes'    => array( 'placeholder' => esc_html__( 'Submit a new offer', 'sonaar-music' ) ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Main title of the user\'s form', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Make an Offer Form Description', 'sonaar-music'),
+                            'id'            => 'makeanoffer_form_desc',
+                            'type'          => 'textarea_small',
+                            'default'       => esc_html__('You are about to create an offer for the following tracks below', 'sonaar-music'),
+                            'attributes'    => array( 'placeholder' => esc_html__( 'You are about to create an offer for the following tracks below', 'sonaar-music' ) ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Sub heading of the user\'s form. You can use also the following dynamic variables: {product_id}, {product_title}, {product_short_description}, {image_src}', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Make an Offer Form', 'sonaar-music'),
+                            'id'            => 'makeanoffer_form',
+                            'type'          => 'textarea_code',
+                            'default'       => __('
+<label for="email">YOUR EMAIL</label>
+<input type="email" id="email" name="email" required>
+<label for="price">YOUR OFFER PRICE</label>
+<input type="text" id="price" name="price" required>
+<label for="message">ADDITIONAL MESSAGE</label>
+<textarea id="message" name="message" rows="4"></textarea>
+<button type="submit" class="button alt">SEND OFFER</button>
+', 'sonaar-music'),
+                        'after'         => 'srmp3_add_tooltip_to_label',   
+                        'tooltip'       => array(
+                                'text'      => esc_html__('Customize the Make an Offer form. You can use also the following dynamic variables: {product_id}, {product_title}, {product_short_description}, {image_src}', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ));
+                        $woocommerce_options->add_field( array(
+                            'name'          => esc_html__('Offer Sent', 'sonaar-music'),
+                            'id'            => 'makeanoffer_sent',
+                            'type'          => 'wysiwyg',
+                            'default' => __( '<h3>Thank you</h3>
+                        
+                            Your offer has been sent! We will get back to you soon.
+                            ', 'sonaar-music' ),
+                            'options' => array(
+                                'textarea_rows' => get_option('default_post_edit_rows', 3),
+                                'media_buttons' => false,
+                            ),
+                            'after'         => 'srmp3_add_tooltip_to_label',
+                            'tooltip'       => array(
+                                'text'      => esc_html__('Notice to the user when the offer has been sent', 'sonaar-music'),
+                                'pro'       => true,
+                            ),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'    => esc_html__('Email Subject', 'sonaar-music'),
+                            'id'      => 'makeanoffer_email_subject',
+                            'type'    => 'text',
+                            'default' => esc_html__('New Offer for {{product_title}}', 'sonaar-music'),
+                        ) );
+                        $woocommerce_options->add_field( array(
+                            'name'    => esc_html__('Make an Offer Email Markup', 'sonaar-music'),
+                            'id'      => 'makeanoffer_email_markup',
+                            'type'    => 'wysiwyg',
+                            'desc'    => __(
+                                '<strong>{{admin_firstname}}</strong> - ' . __('The first name of the admin receiving the email.', 'sonaar-music') . '<br>
+                                <strong>{{product_title}}</strong> - ' . __('The title of the product that the customer is offering.', 'sonaar-music') . '<br>
+                                <strong>{{product_attribute_name}}</strong> - ' . __('The variation attributes of the product (if applicable).', 'sonaar-music') . '<br>
+                                <strong>{{product_url}}</strong> - ' . __('The URL of the product page.', 'sonaar-music') . '<br>
+                                <strong>{{offer_price}}</strong> - ' . __('The price the customer is offering.', 'sonaar-music') . '<br>
+                                <strong>{{product_price}}</strong> - ' . __('The current price of the product.', 'sonaar-music') . '<br>
+                                <strong>{{price_difference}}</strong> - ' . __('The difference between the current price and the offered price.', 'sonaar-music') . '<br>
+                                <strong>{{checkout_url}}</strong> - ' . __('The link to add the product to the cart and proceed to checkout.', 'sonaar-music') . '<br>
+                                <strong>{{customer_email}}</strong> - ' . __('The email of the customer making the offer.', 'sonaar-music') . '<br>
+                                <strong>{{offer_message}}</strong> - ' . __('The message sent by the customer.', 'sonaar-music') . '<br>
+                                <strong>{{website_name}}</strong> - ' . __('The name of your website.', 'sonaar-music'), 
+                                'sonaar-music'
+                            ),
+                            'default' => esc_html( 'Hello {{admin_firstname}},
+                        
+                        You have received a new price offer for the product {{product_title}} from a potential customer.
+                        
+                        ---
+                        {{product_title}}
+                        {{product_attribute_name}}
+                        Product URL: {{product_url}}
+
+                        ---
+                        Customer Information:
+                        Email: {{customer_email}}
+                        Message: {{offer_message}}
+
+                        ---
+                        Customer\'s Offer:
+                        Offer Price: {{offer_price}}
+                        Current Price: {{product_price}}
+                        Discount Asked: {{price_difference}}
+
+                        Please review the customer\'s offer and respond to them directly to accept or make a counter-offer.
+
+                        If you accept the offer:
+                        1) Create a coupon code with a fixed product discount of {{price_difference}}
+                        2) Send your customer the coupon code, as well as this URL so he can make the purchase: {{checkout_url}}
+                        3) Here is a template you can use to send to your customer:
+                        ---
+                     
+                        Hi there,
+
+                        I\'m {{admin_firstname}} from {{website_name}}.
+                        Offer Accepted! Please go to {{checkout_url}} and use this promo code: [ENTER_YOUR_PROMO_CODE_HERE]
+
+                        Thank you for your business!
+                        {{admin_firstname}}
+                        {{website_name}}
+                        ', 'sonaar-music' )
+                        ) );
+                        
                 }
             }
 
@@ -3899,8 +4427,8 @@ class Sonaar_Music_Admin {
                         'type'          => 'select',
                         'options' 						=> [
                             '' 							=> __( 'Select a State', 'sonaar-music' ),
-                            'show' 						=> __( 'Show button if condition met', 'sonaar-music' ),
-                            'hide' 						=> __( 'Hide button if condition met', 'sonaar-music' ),
+                            'show' 						=> __( 'Show Favorite buttons if', 'sonaar-music' ),
+                            'hide' 						=> __( 'Hide Favorite buttons if', 'sonaar-music' ),
                         ],
                         'attributes'    => array(
                             'data-conditional-id'    => 'cta_favorites_dv_enable_main_settings',
@@ -3941,7 +4469,7 @@ class Sonaar_Music_Admin {
                     ) );
                     
                     $favorites_options->add_field( array(
-                        'name'          => esc_html__('If condition NOT met, enable redirection on button click', 'sonaar-music'),
+                        'name'          => esc_html__('Otherwise, show buttons but redirect the user', 'sonaar-music'),
                         'classes'       => 'srmp3-settings--subitem',
                         'id'            => 'cta_favorites_dv_enable_redirect_main_settings',
                         'type'          => 'switch',
@@ -4228,8 +4756,8 @@ class Sonaar_Music_Admin {
                             'type'          => 'select',
                             'options' 						=> [
                                 '' 							=> __( 'Select a State', 'sonaar-music' ),
-                                'show' 						=> __( 'Show button if condition met', 'sonaar-music' ),
-                                'hide' 						=> __( 'Hide button if condition met', 'sonaar-music' ),
+                                'show' 						=> __( 'Show Share buttons if', 'sonaar-music' ),
+                                'hide' 						=> __( 'Hide Share buttons if', 'sonaar-music' ),
                             ],
                             'attributes'    => array(
                                 'data-conditional-id'    => 'cta_share_dv_enable_main_settings',
@@ -4270,7 +4798,7 @@ class Sonaar_Music_Admin {
                         ) );
                         
                         $share_options->add_field( array(
-                            'name'          => esc_html__('If condition NOT met, enable redirection on button click', 'sonaar-music'),
+                            'name'          => esc_html__('Otherwise, show buttons but redirect the user', 'sonaar-music'),
                             'classes'       => 'srmp3-settings--subitem',
                             'id'            => 'cta_share_dv_enable_redirect_main_settings',
                             'type'          => 'switch',
@@ -4658,6 +5186,11 @@ class Sonaar_Music_Admin {
 
 
 
+
+
+
+
+
                 /**
                  * Registers fifth options page, and set main item as parent.
                  */
@@ -4769,7 +5302,19 @@ class Sonaar_Music_Admin {
                         'attributes'    => array(
                             'data-colorpicker' => setDefaultColorPalettes(),
                         ),
-                    ) );  
+                    ) );
+                    $popup_options->add_field( array(
+                        'name'          => esc_html__('Set a blur featured image in the background', 'sonaar-music'),
+                        'id'            => 'cta_popup_background_image',
+                        'type'          => 'switch',
+                        'default'       => 'false',
+                        'after'         => 'srmp3_add_tooltip_to_label',
+                        'tooltip'       => array(
+                            'title'     => esc_html__('', 'sonaar-music'),
+                            'text'      => esc_html__('When an image is present in your popup, it will automatically be used as a background with a subtle blur effect, adding a sleek and modern touch to the design.', 'sonaar-music'),
+                            'pro'       => true,
+                        ),
+                    ) );
                     if ( defined( 'WC_VERSION' ) && Sonaar_Music::get_option('wc_variation_lb', 'srmp3_settings_woocommerce') != 'false' ){     
                         $popup_options->add_field( array(
                             'id'            => 'cta-popup-variant-bg-color',
@@ -4822,7 +5367,52 @@ class Sonaar_Music_Admin {
                             'data-colorpicker' => setDefaultColorPalettes(),
                         ),
                         'description'   => esc_html__('For Product Variations Popup Modal', 'sonaar-music'),
-                    ) );      
+                    ) );
+
+                    $popup_options->add_field( array(
+                        'name'          => esc_html__('Form Elements', 'sonaar-music'),
+                        'type'          => 'title',
+                        'id'            => 'cta_popup_form',
+                    ) );
+                    $popup_options->add_field( array(
+                        'id'            => 'cta_popup_form_input_color',
+                        'type'          => 'colorpicker',
+                        'name'          => esc_html__('Input Field Text Color', 'sonaar-music'),
+                        'class'         => 'color',
+                        'default'       => '#ffffff',
+                        'options'       => array(
+                            'alpha'         => true,
+                        ),
+                        'attributes'    => array(
+                            'data-colorpicker' => setDefaultColorPalettes(),
+                        ),
+                    ) );
+                    $popup_options->add_field( array(
+                        'id'            => 'cta_popup_form_input_background',
+                        'type'          => 'colorpicker',
+                        'name'          => esc_html__('Input Field Background Color', 'sonaar-music'),
+                        'class'         => 'color',
+                        'default'       => 'rgba(255,255,255,0)',
+                        'options'       => array(
+                            'alpha'         => true,
+                        ),
+                        'attributes'    => array(
+                            'data-colorpicker' => setDefaultColorPalettes(),
+                        ),
+                    ) );
+                    $popup_options->add_field( array(
+                        'id'            => 'cta_popup_form_input_border',
+                        'type'          => 'colorpicker',
+                        'name'          => esc_html__('Input Field Border Color', 'sonaar-music'),
+                        'class'         => 'color',
+                        'default'       => '#ffffff',
+                        'options'       => array(
+                            'alpha'         => true,
+                        ),
+                        'attributes'    => array(
+                            'data-colorpicker' => setDefaultColorPalettes(),
+                        ),
+                    ) );
                 }
 
 
@@ -4886,7 +5476,7 @@ class Sonaar_Music_Admin {
                 }
                 if ( function_exists( 'run_sonaar_music_pro' ) && get_site_option( 'sonaar_music_licence', '' )){
                     // POP-UP IF PRO PLUGIN IS INSTALLED
-                    if(class_exists( 'PiwikTracker' )){
+                    if(class_exists( 'WpMatomo' )){
                         $matomoActivated = '<br><br><div style="color:green;">' . esc_html__('Matomo activated and currently tracking!', 'sonaar-music') . '</div>';
                     }else{
                         $matomoActivated = '<br><br><div style="color:gray;">' . esc_html__('Matomo is not installed', 'sonaar-music') . '</div>';
@@ -4930,7 +5520,7 @@ class Sonaar_Music_Admin {
                             'pro'       => true,
                         ),
                     ) );
-                    if(class_exists( 'PiwikTracker' ) && class_exists('Piwik\Plugins\MediaAnalytics\MediaAnalytics') ){
+                    if(class_exists( 'WpMatomo' ) && class_exists('Piwik\Plugins\MediaAnalytics\MediaAnalytics') ){
                         $stats_options->add_field( array(
                             'name'          => esc_html__('Delegate analytics to MediaAnalytics [Recommended]', 'sonaar-music'),
                             'id'            => 'srmp3_use_matomo_mediaanalytics',
@@ -4994,6 +5584,69 @@ class Sonaar_Music_Admin {
                         ),
                     ) );
                 }
+
+
+
+
+
+
+
+
+            if ( function_exists( 'run_sonaar_music_pro' ) && get_site_option('SRMP3_ecommerce') == '1'){
+                /**
+                * Registers fifth options page, and set main item as parent.
+                */
+                $args = array(
+                    'id'           => 'srmp3_settings_emails',
+                    'menu_title'   => esc_html__( 'Collected Emails', 'sonaar-music' ),
+                    'title'        => esc_html__( 'Collected Emails', 'sonaar-music' ),
+                    'object_types' => array( 'options-page' ),
+                    'option_key'   => 'srmp3_settings_emails',
+                    'parent_slug'  => 'edit.php?post_type=' . SR_PLAYLIST_CPT,
+                    'tab_group'    => 'yourprefix_main_options',
+                    'tab_title'    => esc_html__( 'Collected Emails', 'sonaar-music' ),
+                );
+
+                // 'tab_group' property is supported in > 2.4.0.
+                if ( version_compare( CMB2_VERSION, '2.4.0' ) ) {
+                    $args['display_cb'] = 'yourprefix_options_display_with_tabs';
+                }
+
+                $email_options = new_cmb2_box( $args );
+                array_push($options_name, $email_options);
+                $email_options->add_field( array(
+                    'name'          => esc_html__('Manage Collected Emails', 'sonaar-music'),
+                    'type'          => 'title',
+                    'id'            => 'email_export_title',
+                    'description'   => sprintf(
+                        '<div>%1$s</div><br>
+                        <div class="srmp3-bulk-wrapper">
+                            <div>
+                                <label for="start_date">%3$s</label>
+                                <input type="date" id="start_date" name="start_date">
+                                
+                                <label for="end_date">%4$s</label>
+                                <input type="date" id="end_date" name="end_date">
+                                
+                            </div>
+                            <button id="srmp3_export_emails" class="srmp3-general-admin-button showSpinner">%2$s</button>
+                            <button id="srmp3_delete_emails" class="srmp3-general-admin-button deleteSpinner">  <span class="dashicons dashicons-trash"></span>%5$s</button>
+                        </div>',
+                        esc_html__('Use this tool to export emails in a CSV file, which can be easily imported into any mailing platform that accepts CSV imports.', 'sonaar-music'),
+                        esc_html__('Export Email in CSV format', 'sonaar-music'), // %2$s
+                        esc_html__('Start Date:', 'sonaar-music'), // %3$s
+                        esc_html__('End Date:', 'sonaar-music'),   // %4$s
+                        esc_html__('Delete Collected Emails', 'sonaar-music') // %5$s
+                    ),
+                ));
+                
+                
+            }
+
+
+
+
+
 
             /**
              * Registers Settings Tools options page, and set main item as parent.
@@ -5891,13 +6544,6 @@ class Sonaar_Music_Admin {
                     'cmb2-id-srmp3-posttypes-title'                           => esc_html__('Post Types', 'sonaar-music'),
                     'cmb2-id-player-settings-title'                     => esc_html__('Player Settings', 'sonaar-music'),
                     'conditional' => [
-                        'condition' => 'run_sonaar_music_pro',
-                        'exist'     => true,
-                        'items' => [
-                            'cmb2-id-force-cta-download-settings-title' => esc_html__('Download Buttons', 'sonaar-music'),
-                        ],
-                    ],
-                    'conditional2' => [
                         'condition' => 'isBusinessPlan',
                         'exist'     => true,
                         'items' => [
@@ -5951,6 +6597,7 @@ class Sonaar_Music_Admin {
                             'cmb2-id-woocommerce-title'                 => esc_html__( 'WooCommerce Settings', 'sonaar-music' ),
                             'cmb2-id-sr-woo-shop-setting-heading'       => esc_html__( 'Shop Page Players', 'sonaar-music' ),
                             'cmb2-id-sr-woo-product-setting-heading'    => esc_html__( 'Product Page Player', 'sonaar-music' ),
+                            'cmb2-id-sr-woo-make-offer-setting-heading' => esc_html__( 'Make an Offer', 'sonaar-music' ),
                         ],
                     ],
                 ],
@@ -6039,8 +6686,10 @@ class Sonaar_Music_Admin {
                 'Widget Player Settings'    => 'srmp3_settings_widget_player',
                 'Sticky Player Settings'    => 'srmp3_settings_sticky_player',
                 'Audio Preview Settings'    => 'srmp3_settings_audiopreview',
+                'Download Button'           => 'srmp3_settings_download',
                 'WooCommerce Settings'      => 'srmp3_settings_woocommerce',
                 'Popup Settings'            => 'srmp3_settings_popup',
+                'Ask for Email'             => 'srmp3_settings_emails',
                 'Stats Settings'            => 'srmp3_settings_stats',
                 'Favorites Settings'        => 'srmp3_settings_favorites',
                 'Share Settings'            => 'srmp3_settings_share',
@@ -7482,6 +8131,23 @@ class Sonaar_Music_Admin {
                     'name'          => $this->sr_GetString('The Contract'),
                     //'description'   => esc_html__("BPM, Hashtag, Description, etc. Will appear below track title in the playlist.",'sonaar-music'),
                     'type'          => 'wysiwyg',
+                    'desc'    => __('Use the following variables to dynamize your contract:', 'sonaar-music') . '<br><br>
+                        <strong>{LICENSE_NAME}</strong> - ' . __('Name of this license', 'sonaar-music') . '<br>
+                        <strong>{CONTRACT_DATE}</strong> - ' . __('Date of the contract', 'sonaar-music') . '<br>
+                        <strong>{CUSTOMER_FULLNAME}</strong> - ' . __('Customer full name', 'sonaar-music') . '<br>
+                        <strong>{CUSTOMER_EMAIL}</strong> - ' . __('Customer email address', 'sonaar-music') . '<br>
+                        <strong>{CUSTOMER_ADDRESS}</strong> - ' . __('Customer address', 'sonaar-music') . '<br>
+                        <strong>{PRODUCER_ALIAS}</strong> - ' . __('Producer alias or name', 'sonaar-music') . '<br>
+                        <strong>{PRODUCT_TITLE}</strong> - ' . __('Title of the purchased product', 'sonaar-music') . '<br>
+                        <strong>{PERFORMANCES_FOR_PROFIT}</strong> - ' . __('Allowed for profit live performance?', 'sonaar-music') . '<br>
+                        <strong>{NUMBER_OF_RADIO_STATIONS}</strong> - ' . __('Number of radio stations allowed', 'sonaar-music') . '<br>
+                        <strong>{DISTRIBUTE_COPIES}</strong> - ' . __('Number of distribution copies allowed', 'sonaar-music') . '<br>
+                        <strong>{AUDIO_STREAMS}</strong> - ' . __('Number of audio streams allowed', 'sonaar-music') . '<br>
+                        <strong>{MONETIZED_VIDEO_STREAMS_ALLOWED}</strong> - ' . __('Number of monetized music video streams allowed', 'sonaar-music') . '<br>
+                        <strong>{MONETIZED_MUSIC_VIDEOS}</strong> - ' . __('Number of monetized music videos allowed', 'sonaar-music') . '<br>
+                        <strong>{FREE_DOWNLOADS}</strong> - ' . __('Number of free downloads allowed', 'sonaar-music') . '<br>
+                        <strong>{STATE_PROVINCE_COUNTRY}</strong> - ' . __('State, province, and country of the seller', 'sonaar-music') . '<br>
+                        <strong>{acf_Your-ACF-ID-Here}</strong> - ' . __('Use ACF field prefixed with {acf_xxxx}', 'sonaar-music'),
                     'options' => array(
                         //'textpromo' => esc_html__('Pro Feature', 'sonaar-music'),
                         'wpautop' => false, // use wpautop?
@@ -7586,141 +8252,7 @@ class Sonaar_Music_Admin {
                         '</h3>', //%20$s
                         ),
                 ));
-                $cmb_post_usageterms->add_field( array(
-                    'name'          => esc_html__('Use the variables below to build your contract', 'sonaar-music'),
-                    'type'          => 'title',
-                    'id'            => 'var_usageterms_build_your_contract'
-                ) );
-                if(function_exists('acf')){
-                    $cmb_post_usageterms->add_field( array(
-                        'classes'       => 'srmp3-var-licensecontract',
-                        'name'          => esc_html('{acf_Your-ACF-ID-Here}'),
-                        'type'          => 'title',
-                        'description'   => sprintf( esc_html__( 'Want to use ACF Field from your product ?%s use the ACF ID prefixed with {acf_xxxx}', 'sonaar-music' ), '<br>' ),
-                        'id'            => 'var_usageterms_acf'
-                    ) );
-                }
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{LICENSE_NAME}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Name of this license', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_license'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{CONTRACT_DATE}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Date of the contract', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_date'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{CUSTOMER_FULLNAME}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Customer fullname', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_fullname'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{CUSTOMER_EMAIL}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Customer email address', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_email'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{CUSTOMER_ADDRESS}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Customer address', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_address'
-                ) );
-                
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{PRODUCER_ALIAS}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Producer Name', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_producer_alias'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{PRODUCT_TITLE}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Title of the purchased product', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_product_title'
-                ) );
-                /*$cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{PRODUCT_PRICE}'),
-                    'type'          => 'title',
-                    'description'   => __( 'Price of the purchased product', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_product_price'
-                ) );*/
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{PERFORMANCES_FOR_PROFIT}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Allowed for profit live performance ?', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_performances_for_profit'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{NUMBER_OF_RADIO_STATIONS}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Number of radio stations allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_radio_station'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{DISTRIBUTE_COPIES}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Number of distribution copies allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_dist_copies'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{AUDIO_STREAMS}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Number of audio streams allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_audiostreams'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{MONETIZED_VIDEO_STREAMS_ALLOWED}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Number of monitized music videos streams allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_musicvideosstreams'
-                ) );
-                /*$cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{NONMONETIZED_VIDEO_STREAMS_ALLOWED}'),
-                    'type'          => 'title',
-                    'description'   => __( 'Number of non-monitized music videos streams allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_nonmonitezmusicvideosstreams'
-                ) );*/
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{MONETIZED_MUSIC_VIDEOS}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Number of monitized music videos allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_musicvideos'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{FREE_DOWNLOADS}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'Number of free downloads allowed', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_freedownloads'
-                ) );
-                $cmb_post_usageterms->add_field( array(
-                    'classes'       => 'srmp3-var-licensecontract',
-                    'name'          => esc_html('{STATE_PROVINCE_COUNTRY}'),
-                    'type'          => 'title',
-                    'description'   => esc_html__( 'States/Provinces and Country of the seller', 'sonaar-music' ),
-                    'id'            => 'var_usageterms_state'
-                ) );
-
+               
                  // Add the default price field to the term edit form.
                 function register_attribute_srmp3_license_default_price_field() {
                     $attribute_taxonomies = wc_get_attribute_taxonomies();
@@ -8044,6 +8576,12 @@ class Sonaar_Music_Admin {
     public function register_widget(){
         register_widget( 'Sonaar_Music_Widget' );
     }
+    public function srmp3_clear_cookie(){
+        /*Delete the srmp3_settings_sticky_player cookie when continuous player is desable*/
+        if( Sonaar_Music::get_option('enable_continuous_player', 'srmp3_settings_sticky_player') != 'true' && isset($_COOKIE['sonaar_mp3_player_settings']) ){
+            setcookie('sonaar_mp3_player_settings', '', time() - 3600, '/');
+        }
+    }
     
     public function srmp3_add_shortcode(){
     
@@ -8299,7 +8837,9 @@ class Sonaar_Music_Admin {
             'srmp3_settings_widget_player' => true,
             'srmp3_settings_sticky_player' => true,
             'srmp3_settings_audiopreview' => true,
+            'srmp3_settings_download' => true,
             'srmp3_settings_woocommerce' => true,
+            'srmp3_settings_emails' => true,
             'srmp3_settings_popup' => true,
             'srmp3_settings_stats' => true,
             'srmp3_settings_tts' => true,

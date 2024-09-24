@@ -1706,7 +1706,13 @@ class Sonaar_Music_Widget extends WP_Widget{
                 $waveType = 'simplebar';
             }
             $miniPlayerClass .= ' sr_waveform_' . $waveType;
-        } 
+        }
+        if( $this->getOptionValue('show_prevnext_bt')  && $playerWidgetTemplate == 'skin_boxed_tracklist' ){
+            $miniPlayerClass .= ' srp_show_prevnext_bt';
+        }
+        if(isset($this->shortcodeParams['control_alignment'])  && isset($this->shortcodeParams['control_alignment']) == 'left' && $progressbar_inline ){
+            $miniPlayerClass .= ' srp_control_left';
+        }
 
         $miniPlayer_datas = (isset($this->shortcodeParams['wave_bar_width'])) ? ' data-wave-bar-width="' . esc_attr($this->shortcodeParams['wave_bar_width']) . '"' : '';
         $miniPlayer_datas .= (isset($this->shortcodeParams['wave_bar_gap'])) ? ' data-wave-bar-gap="' . esc_attr($this->shortcodeParams['wave_bar_gap']) . '"' : '';
@@ -2282,7 +2288,12 @@ class Sonaar_Music_Widget extends WP_Widget{
                     $query_args['orderby'] =>  $ordering['order'],
                     'ID' => 'ASC'
                 );
-            }
+            }else if($query_args['orderby'] == 'meta_value_num' ){ //When orderby is a meta_value_num, we need to add a second orderby to avoid random order when the meta_value is the same
+                $query_args['orderby'] = array( 
+                    $query_args['orderby'] =>  $ordering['order'], 
+                    'title' => 'ASC' 
+                ); 
+            } 
         }
        
         if (!empty($tag_query)) {
@@ -2574,7 +2585,10 @@ class Sonaar_Music_Widget extends WP_Widget{
                         $href = '';
                         }
 
-                        if( isset($store['has-variation'])  && ! $store['has-variation'] && Sonaar_Music::get_option('wc_enable_ajax_addtocart', 'srmp3_settings_woocommerce') == 'true' ){ 
+                       
+                        if (isset($store['make-offer-bt'])){
+                            $classes .= ' srp-make-offer-bt';
+                        }else if( isset($store['has-variation'])  && ! $store['has-variation'] && Sonaar_Music::get_option('wc_enable_ajax_addtocart', 'srmp3_settings_woocommerce') == 'true' ){ 
                             $classes .= ' add_to_cart_button ajax_add_to_cart';
                             $extraAttributes .= ' data-product_id="' . esc_attr($track['sourcePostID']) . '"';
                         }
@@ -2582,7 +2596,7 @@ class Sonaar_Music_Widget extends WP_Widget{
                         if( isset($store['cta-class'])){ 
                             $classes .= ' ' . $store['cta-class'];
                             
-                            if( $store['cta-class'] == 'sr_store_force_dl_bt'){ //If download CTA
+                            if (strpos($store['cta-class'], 'sr_store_force_dl_bt') !== false) { //If download CTA
                                 if( isset( $this->shortcodeParams['force_cta_dl'] ) && $this->shortcodeParams['force_cta_dl'] == 'false' ){
                                     $classes .= ' srp_hidden';
                                 }
@@ -3210,14 +3224,38 @@ class Sonaar_Music_Widget extends WP_Widget{
         $product_slug = $slug;
         $checkout_url = ( defined( 'WC_VERSION' ) ) ? wc_get_checkout_url() : '';
         $product_price = ( $wc_bt_type !='wc_bt_type_label' ) ? html_entity_decode($this->get_wc_price($post_id)) : '';
-    
-        if( $wc_add_to_cart == 'true' ){
-            $label = (Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') && Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') != '' && Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') != 'Add to Cart') ? Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') : esc_html__('Add to Cart', 'sonaar-music');
-            $label = ($wc_bt_type == 'wc_bt_type_price') ? '' : $label . ' '; 
+       
+        
+        if( $wc_add_to_cart == 'true' ){    
+            // Set label based on whether "Make an Offer" is enabled
+          
             $url_if_variation = get_permalink( $post_id ); //no add to cart since its a variation and user must choose variation from the single page
             $url_if_no_variation = get_permalink(get_the_ID()) . '?add-to-cart=' . $post_id;
             $storeicon = ( Sonaar_Music::get_option('wc_bt_show_icon', 'srmp3_settings_woocommerce') =='true' ) ? 'fas fa-cart-plus' : '';
             $pageUrl = ($is_variable_product == 1) ? $url_if_variation : $url_if_no_variation ;
+
+            $make_offer_enabled = false;
+            $make_offer_enabled_hide_price = false;
+
+            if (method_exists('SRMP3_WooCommerce', 'is_make_offer_enabled')) {
+                $make_offer_enabled = SRMP3_WooCommerce::is_make_offer_enabled($post_id);
+                if($make_offer_enabled === "yes"){
+                    if (get_post_meta($post_id, '_make_offer_hide_price', true) === 'yes') {
+                        $make_offer_enabled_hide_price = true;
+                    }
+                }
+            }
+
+
+            
+            if ($make_offer_enabled_hide_price) {
+                $label = (Sonaar_Music::get_option('makeanoffer_button_label', 'srmp3_settings_woocommerce')) ? Sonaar_Music::get_option('makeanoffer_button_label', 'srmp3_settings_woocommerce') : esc_html__('Make an Offer', 'sonaar-music');
+                $product_price = '';
+                $pageUrl = '#srpmakeoffer';
+            } else {
+                $label = (Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') && Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') != '' && Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') != 'Add to Cart') ? Sonaar_Music::get_option('wc_add_to_cart_text', 'srmp3_settings_woocommerce') : esc_html__('Add to Cart', 'sonaar-music');
+                $label = ($wc_bt_type == 'wc_bt_type_price') ? '' : $label . ' ';
+            }
 
             $storeListArgs = [
                 'store-icon'    => $storeicon,
@@ -3228,6 +3266,9 @@ class Sonaar_Music_Widget extends WP_Widget{
                 'has-variation' => $is_variable_product == 1,
                 'product-id'    =>$post_id
             ];
+            if ($make_offer_enabled_hide_price) {
+                $storeListArgs['make-offer-bt'] = true;
+            }
 
             array_push($store_list, $storeListArgs);
         }
@@ -3318,25 +3359,37 @@ class Sonaar_Music_Widget extends WP_Widget{
         $visibility_shortcode_set = $this->shortcodeParams[$shortcode_name] ?? null;
         $response['link'] = false;
         $display = true;
+        $askforemail = false;
 
         if( (isset($visibility_shortcode_set))){
-            //$display = $this->checkCTA_Condition($shortcode_name, $this->shortcodeParams ); // Shortcode parameters for visibility are set, check if we should display the CTA.
             $redirect_link = $this->shortcodeParams[$shortcode_name . '_redirect_url'] ?? null;
+
+            //check if  $this->shortcodeParams[$shortcode_name] incliudes the string 'askemail'
+            if (strpos($this->shortcodeParams[$shortcode_name], 'askemail') !== false) {
+                    $askforemail = true;
+            }
+
         }else{        
             /*
             // START for dynamic visibility SETTINGS
             */
             $state = null;
             $condition = null;
+            $action_when_not_met = null;
             $value = null;
 
             switch ($bt_type) {     
                 case 'download':
-                    $state = Sonaar_Music::get_option('cta_dl_dv_state_main_settings', 'srmp3_settings_general');
-                    $condition = Sonaar_Music::get_option('cta_dl_dv_condition_main_settings', 'srmp3_settings_general');
-                    $value = Sonaar_Music::get_option('cta_dl_dv_role_main_settings', 'srmp3_settings_general');
-                    $redirect_link = (Sonaar_Music::get_option('cta_dl_dv_enable_redirect_main_settings', 'srmp3_settings_general') === 'true' && Sonaar_Music::get_option('cta_dl_dv_redirection_url_main_settings', 'srmp3_settings_general') !== '') ? Sonaar_Music::get_option('cta_dl_dv_redirection_url_main_settings', 'srmp3_settings_general') : null;
-                    
+                    $isDynamicEnabled = (get_site_option('SRMP3_ecommerce') == '1' && get_site_option('sonaar_music_licence')&& Sonaar_Music::get_option('cta_dl_dv_enable_main_settings', 'srmp3_settings_download') === "true") ? true : false;
+                    if (!$isDynamicEnabled) {
+                        break;
+                    }
+                    $state = Sonaar_Music::get_option('cta_dl_dv_state_main_settings', 'srmp3_settings_download');
+                    $condition = Sonaar_Music::get_option('cta_dl_dv_condition_main_settings', 'srmp3_settings_download');
+                    $value = Sonaar_Music::get_option('cta_dl_dv_role_main_settings', 'srmp3_settings_download');
+                    $action_when_not_met = (Sonaar_Music::get_option('cta_dl_dv_enable_redirect_main_settings', 'srmp3_settings_download') === "true" && Sonaar_Music::get_option('cta_dl_dv_condition_not_met_action', 'srmp3_settings_download') === "") ? "redirect" : Sonaar_Music::get_option('cta_dl_dv_condition_not_met_action', 'srmp3_settings_download');
+                    $redirect_link = ($action_when_not_met === 'redirect' && Sonaar_Music::get_option('cta_dl_dv_redirection_url_main_settings', 'srmp3_settings_download') !== '') ? Sonaar_Music::get_option('cta_dl_dv_redirection_url_main_settings', 'srmp3_settings_download') : null;
+                    $redirect_link = ($action_when_not_met === 'askemail' ) ? '#srp_ask_email' : $redirect_link;
                     break;
                 
                 case 'share':
@@ -3375,13 +3428,19 @@ class Sonaar_Music_Widget extends WP_Widget{
             } else {
                 $response['link'] = false;
                 $response['display'] = false;
+
+                if ($askforemail) {
+                    $redirect_link = '#srp_ask_email';
+                    $response['link'] = $redirect_link;
+                    $response['display'] = true;
+                }
                 // We hide the button
             }
         }else{
             $response['display'] = true;
         }
         $response['link'] = ($response['link'] || !$response['link'] && !is_user_logged_in() && isset($redirect_link)) ? $redirect_link : 'original_link';
-        
+
         return $response;
        
     }
@@ -3401,13 +3460,21 @@ class Sonaar_Music_Widget extends WP_Widget{
             return [];
         }
 
+        // Default class
+        $ctaClass = 'sr_store_force_dl_bt';
+        $storeName = (Sonaar_Music::get_option('force_cta_download_label', 'srmp3_settings_download') && Sonaar_Music::get_option('force_cta_download_label', 'srmp3_settings_download') != '') ? Sonaar_Music::get_option('force_cta_download_label', 'srmp3_settings_download') : __('Download', 'sonaar-music');
+         // Add additional class if link is srp_ask_email
+         if ($response['link'] === '#srp_ask_email') { 
+            $ctaClass .= ' sr_store_ask_email'; 
+            $storeName = (Sonaar_Music::get_option('download_settings_afe_button_label', 'srmp3_settings_download') && Sonaar_Music::get_option('download_settings_afe_button_label', 'srmp3_settings_download') != '') ? Sonaar_Music::get_option('download_settings_afe_button_label', 'srmp3_settings_download') : $storeName; 
+        } 
         return [
             [
                 'store-icon'    => 'fas fa-download',
                 'store-target'  => '_self',
                 'store-link'    => $response['link'],
-                'store-name'    => (Sonaar_Music::get_option('force_cta_download_label', 'srmp3_settings_general') && Sonaar_Music::get_option('force_cta_download_label', 'srmp3_settings_general') != '') ? Sonaar_Music::get_option('force_cta_download_label', 'srmp3_settings_general') : __('Download', 'sonaar-music'),
-                'cta-class'  => 'sr_store_force_dl_bt',
+                'store-name'    => $storeName,
+                'cta-class'     => $ctaClass,
                 'show-label'    => true,
                 'download-attr' => ($this->cta_download_visibility['link'] === 'original_link')?true:false // dont set the download attribute if "condition NOT met" and force download CTA redirection is enabled  
                 ]
@@ -3578,7 +3645,7 @@ class Sonaar_Music_Widget extends WP_Widget{
             $userHistoryList = $this->loadUserPlaylists_fromCookies('RecentlyPlayed');
         }
 
-        $cta_download_settings = Sonaar_Music::get_option('force_cta_download', 'srmp3_settings_general');
+        $cta_download_settings = Sonaar_Music::get_option('force_cta_download', 'srmp3_settings_download');
         $cta_link_settings = Sonaar_Music::get_option('force_cta_singlepost', 'srmp3_settings_general');
         $cta_share_settings = Sonaar_Music::get_option('force_cta_share', 'srmp3_settings_share');
         $cta_favorite_settings = Sonaar_Music::get_option('force_cta_favorite', 'srmp3_settings_favorites');
@@ -3852,7 +3919,7 @@ class Sonaar_Music_Widget extends WP_Widget{
                 $album_tracks[$i]['track_pos'] = $track_pos;
                 $album_tracks[$i]['sourcePostID'] = null;
                 $album_tracks[$i]['description'] = (isset($track_description)) ? $track_description : null;
-                if( Sonaar_Music::get_option('force_cta_download', 'srmp3_settings_general') == "true" || (isset( $this->shortcodeParams['force_cta_dl']) && $this->shortcodeParams['force_cta_dl'] == 'true')){
+                if( Sonaar_Music::get_option('force_cta_download', 'srmp3_settings_download') == "true" || (isset( $this->shortcodeParams['force_cta_dl']) && $this->shortcodeParams['force_cta_dl'] == 'true')){
                     $album_tracks[$i]['optional_storelist_cta'] = $this->push_download_storelist_cta( $album_tracks[$i]['mp3'] );
                 }
                 $track_pos++; 

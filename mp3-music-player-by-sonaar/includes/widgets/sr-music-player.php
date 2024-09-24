@@ -70,6 +70,8 @@ class SR_Audio_Player extends Widget_Base {
 				<li><i class="eicon-check"></i>Filter Dropdown Widget</li>
 				<li><i class="eicon-check"></i>Chips & Tags Widget</li>
 				<li><i class="eicon-check"></i>Add to Favorites Button & Favorite Playlist widget</li>
+				<li><i class="eicon-check"></i>Send an Offer / Negotiate Buttons</li>
+				<li><i class="eicon-check"></i>Ask for Email to Access Download</li>
 				<li><i class="eicon-check"></i>Tracklist Custom Fields</li>
 				<li><i class="eicon-check"></i>Tracklist Pagination</li>
 				<li><i class="eicon-check"></i>Lazy Load option for Optimal Performance</li>
@@ -1485,6 +1487,8 @@ class SR_Audio_Player extends Widget_Base {
 																<li><i class="eicon-check"></i>Full WooCommerce Support</li>
 																<li><i class="eicon-check"></i>Support for ACF, JetEngine, etc</li>
 																<li><i class="eicon-check"></i>Add to Favorites Button & Favorite Playlist widget</li>
+																<li><i class="eicon-check"></i>Send an Offer / Negotiate Buttons</li>
+																<li><i class="eicon-check"></i>Ask for Email to Access Download</li>
 																<li><i class="eicon-check"></i>Search Bar Elementor Widget</li>
 																<li><i class="eicon-check"></i>Filter Dropdown Elementor Widget</li>
 																<li><i class="eicon-check"></i>Chips & Tags Elementor Widget</li>
@@ -5167,6 +5171,29 @@ class SR_Audio_Player extends Widget_Base {
 					'separator'						=> 'before',
 				]
 			);
+			$this->add_responsive_control(
+				'control_alignment',
+				[
+					'label' 						=> esc_html__( 'Control Alignment', 'sonaar-music' ),
+					'type' 							=> Controls_Manager::CHOOSE,
+					'options' 						=> [
+						'left'    					=> [
+							'title' 				=> esc_html__( 'Left', 'elementor' ),
+							'icon' 					=> 'eicon-h-align-left',
+						],
+						'right' 					=> [
+							'title' 				=> esc_html__( 'Right', 'elementor' ),
+							'icon' 					=> 'eicon-h-align-right',
+						],
+					],
+					'default' 						=> 'right',
+					'condition' 				=> [
+						'progressbar_inline'		=> 'yes',
+						'player_layout' 	=> 'skin_boxed_tracklist',
+					],
+
+				]
+			);
 			$this->add_control(
 				'duration_soundwave_show',
 				[
@@ -5842,7 +5869,23 @@ class SR_Audio_Player extends Widget_Base {
 				],
 			]
 		);
-			
+			$this->add_control(
+				'show_prevnext_bt',
+				[
+					'label' 		=> esc_html__( 'Show Previous & Next buttons', 'sonaar-music' ),
+					'type' 			=> Controls_Manager::SELECT,
+					'options' 		=> [
+						//'default' 	=> esc_html__( $this->get_srmp3_option_label('player_show_shuffle_bt', 'srmp3_settings_widget_player') ),
+						'true' 		=> esc_html__( 'Yes', 'sonaar-music' ),
+						'false' 	=> esc_html__( 'No', 'sonaar-music' ),
+					],
+					//'default' 		=> 'default',
+					'default' 		=> 'false',
+					'condition' 					=> [
+						'player_layout' 	=> 'skin_boxed_tracklist',
+					],
+				]
+			);
 			$this->add_control(
 				'show_skip_bt',
 				[
@@ -9598,7 +9641,7 @@ class SR_Audio_Player extends Widget_Base {
 					'separator' 					=> 'before',
 					'type' 							=> Controls_Manager::SELECT,
 					'options' 		=> [
-						'default' 	=> esc_html__( $this->get_srmp3_option_label('force_cta_download', 'srmp3_settings_general') ),
+						'default' 	=> esc_html__( $this->get_srmp3_option_label('force_cta_download', 'srmp3_settings_download') ),
 						'true' 		=> esc_html__( 'Yes', 'sonaar-music' ),
 						'false' 	=> esc_html__( 'No', 'sonaar-music' ),
 					],
@@ -9636,8 +9679,8 @@ class SR_Audio_Player extends Widget_Base {
 						'type' 							=> Controls_Manager::SELECT,
 						'options' 						=> [
 							'' 							=> esc_html__( 'Select a State', 'sonaar-music' ),
-							'show' 						=> esc_html__( 'Show button if condition met', 'sonaar-music' ),
-							'hide' 						=> esc_html__( 'Hide button if condition met', 'sonaar-music' ),
+							'show' 						=> esc_html__( 'Show Download buttons if', 'sonaar-music' ),
+							'hide' 						=> esc_html__( 'Hide Download buttons if', 'sonaar-music' ),
 						],
 						'default' 						=> '',
 						'conditions' 					=> [
@@ -9705,15 +9748,17 @@ class SR_Audio_Player extends Widget_Base {
 					]
 				);
 				$this->add_control(
-					'cta_dl_dv_enable_redirect',
+					'cta_dl_dv_not_met_action',
 					[
-						'label'							=> esc_html__( 'Enable Redirection when condition is not met', 'sonaar-music' ),
-						'description' 					=> esc_html__( 'If condition not met, display the button but redirect people to a link or popup', 'sonaar-music'),
-						'type' 							=> \Elementor\Controls_Manager::SWITCHER,
-						'label_on' 						=> esc_html__( 'Yes', 'sonaar-music' ),
-						'label_off' 					=> esc_html__( 'No', 'sonaar-music' ),
-						'return_value' 					=> 'yes',
-						'default' 						=> 'no',	
+						'label'							=> esc_html__( 'Otherwise', 'sonaar-music' ),
+						'show_label' 					=> false,
+						'type' 							=> Controls_Manager::SELECT,
+						'default' 						=> '',
+						'options' 						=> [
+							'' 							=> esc_html__( 'Otherwise, Hide the Download Button', 'sonaar-music' ),
+							'redirect' 			=> esc_html__( 'Otherwise, Redirect the Download Button', 'sonaar-music' ),
+							'askemail' 			=> esc_html__( 'Otherwise, Ask for an email', 'sonaar-music' ),
+						],
 						'conditions' 					=> [
 							'relation' => 'and',
 							'terms' => [
@@ -9723,7 +9768,7 @@ class SR_Audio_Player extends Widget_Base {
 									'value' => 'yes'
 								],
 							]
-						] 	
+						] 
 					]
 				);
 				$this->add_control(
@@ -9745,9 +9790,9 @@ class SR_Audio_Player extends Widget_Base {
 									'value' => 'yes'
 								],
 								[
-									'name' => 'cta_dl_dv_enable_redirect',
+									'name' => 'cta_dl_dv_not_met_action',
 									'operator' => '==',
-									'value' => 'yes'
+									'value' => 'redirect'
 								],
 							]
 						] 
@@ -9801,8 +9846,8 @@ class SR_Audio_Player extends Widget_Base {
 						'type' 							=> Controls_Manager::SELECT,
 						'options' 						=> [
 							'' 							=> esc_html__( 'Select a State', 'sonaar-music' ),
-							'show' 						=> esc_html__( 'Show button if condition met', 'sonaar-music' ),
-							'hide' 						=> esc_html__( 'Hide button if condition met', 'sonaar-music' ),
+							'show' 						=> esc_html__( 'Show Favorite buttons if', 'sonaar-music' ),
+							'hide' 						=> esc_html__( 'Hide Favorite buttons if', 'sonaar-music' ),
 						],
 						'default' 						=> '',
 						'conditions' 					=> [
@@ -9872,7 +9917,7 @@ class SR_Audio_Player extends Widget_Base {
 				$this->add_control(
 					'cta_favorites_dv_enable_redirect',
 					[
-						'label'							=> esc_html__( 'Enable Redirection when condition is not met', 'sonaar-music' ),
+						'label'							=> esc_html__( 'Otherwise, show buttons but redirect the user', 'sonaar-music' ),
 						'description' 					=> esc_html__( 'If condition not met, display the button but redirect people to a link or popup', 'sonaar-music'),
 						'type' 							=> \Elementor\Controls_Manager::SWITCHER,
 						'label_on' 						=> esc_html__( 'Yes', 'sonaar-music' ),
@@ -9964,8 +10009,8 @@ class SR_Audio_Player extends Widget_Base {
 						'type' 							=> Controls_Manager::SELECT,
 						'options' 						=> [
 							'' 							=> esc_html__( 'Select a State', 'sonaar-music' ),
-							'show' 						=> esc_html__( 'Show button if condition met', 'sonaar-music' ),
-							'hide' 						=> esc_html__( 'Hide button if condition met', 'sonaar-music' ),
+							'show' 						=> esc_html__( 'Show Share buttons if', 'sonaar-music' ),
+							'hide' 						=> esc_html__( 'Hide Share buttons if', 'sonaar-music' ),
 						],
 						'default' 						=> '',
 						'conditions' 					=> [
@@ -10035,7 +10080,7 @@ class SR_Audio_Player extends Widget_Base {
 				$this->add_control(
 					'cta_share_dv_enable_redirect',
 					[
-						'label'							=> esc_html__( 'Enable Redirection when condition is not met', 'sonaar-music' ),
+						'label'							=> esc_html__( 'Otherwise, show buttons but redirect the user', 'sonaar-music' ),
 						'description' 					=> esc_html__( 'If condition not met, display the button but redirect people to a link or popup', 'sonaar-music'),
 						'type' 							=> \Elementor\Controls_Manager::SWITCHER,
 						'label_on' 						=> esc_html__( 'Yes', 'sonaar-music' ),
@@ -11511,19 +11556,19 @@ class SR_Audio_Player extends Widget_Base {
 				$spectro .= (isset($settings['spectro_barwidth']['size'])) ? "barWidth:" . $settings['spectro_barwidth']['size'] . "|" : "";
 				$spectro .= (isset($settings['spectro_bargap']['size'])) ? "barGap:" . $settings['spectro_bargap']['size'] . "|" : "";
 				$spectro .= (isset($settings['spectro_canvasheight']['size'])) ? "canvasHeight:" . $settings['spectro_canvasheight']['size'] . "|" : "";
-				$spectro .= "halign:" . $settings['spectro_alignment'] . "|";
-				$spectro .= "valign:" . $settings['spectro_vertical_aligned'] . "|";
+				$spectro .= ( isset($settings['spectro_alignment']) ) ? "halign:" . $settings['spectro_alignment'] . "|" : "";
+				$spectro .= ( isset($settings['spectro_vertical_aligned']) )? "valign:" . $settings['spectro_vertical_aligned'] . "|": "valign:bottom|";
 				$spectro .= "spectroStyle:" . $settings['spectro_animation'] . "|";
-				$spectro .= "sharpFx:" . $settings['spectro_pointu'] . "|";
+				$spectro .= ( isset($settings['spectro_pointu']) )? "sharpFx:" . $settings['spectro_pointu'] . "|" : "";
 				$spectro .= (isset($settings['spectro_shockwavevibrance']['size'])) ? "shockwaveVibrance:" . $settings['spectro_shockwavevibrance']['size'] . "|" : "";
 				$spectro .= (isset($settings['spectro_blockheight']['size'])) ? "blockHeight:" . $settings['spectro_blockheight']['size'] . "|" : "";
 				$spectro .= (isset($settings['spectro_blockgap']['size'])) ? "blockGap:" . $settings['spectro_blockgap']['size'] . "|" : "";
-				$spectro .= "reflectFx:" . $settings['spectro_reflect'] . "|";
-				$spectro .= "gradientDirection:" . $settings['spectro_gradient_direction'] . "|";
-				$spectro .= "enableOnTracklist:" . $settings['spectro_tracklist_spectrum'] . "|";
-				$spectro .= "bounceClass:" . $settings['spectro_classes'] . "|";
+				$spectro .= (isset($settings['spectro_reflect'])) ?  "reflectFx:" . $settings['spectro_reflect'] . "|" : "";
+				$spectro .= (isset($settings['spectro_gradient_direction'])) ? "gradientDirection:" . $settings['spectro_gradient_direction'] . "|" : "gradientDirection:vertical|";
+				$spectro .= (isset($settings['spectro_tracklist_spectrum'])) ? "enableOnTracklist:" . $settings['spectro_tracklist_spectrum'] . "|" : "";
+				$spectro .= (isset($settings['spectro_classes'])) ? "bounceClass:" . $settings['spectro_classes'] . "|" : "";
 				$spectro .= (isset($settings['spectro_selector_vibrance']['size'])) ? "bounceVibrance:" . $settings['spectro_selector_vibrance']['size'] . "|" : "";
-				$spectro .= "bounceBlur:" . $settings['spectro_selectorblur'];
+				$spectro .= (isset($settings['spectro_selectorblur'])) ? "bounceBlur:" . $settings['spectro_selectorblur'] : "";
 			}
 		
 			if (get_site_option('SRMP3_ecommerce') == '1'){
@@ -11734,7 +11779,7 @@ class SR_Audio_Player extends Widget_Base {
 			if ($settings['cta_dl_dv_enable'] == 'yes'){ //Download Visibility
 				if (isset($settings['cta_dl_dv_state']) && $settings['cta_dl_dv_state'] !== '' && isset($settings['cta_dl_dv_condition']) && $settings['cta_dl_dv_condition'] !== ''){
 					$cta_dl_dv_role = (isset($settings['cta_dl_dv_role']) && is_array($settings['cta_dl_dv_role'])) ? implode(', ', $settings['cta_dl_dv_role']) : '';
-					$shortcode .= 'cta_visibility_download="' . $settings['cta_dl_dv_state'] . '|' . $settings['cta_dl_dv_condition'] . '|' . $cta_dl_dv_role . '" ';
+					$shortcode .= 'cta_visibility_download="' . $settings['cta_dl_dv_state'] . '|' . $settings['cta_dl_dv_condition'] . '|' . $cta_dl_dv_role . '|' . $settings['cta_dl_dv_not_met_action'] .'" ';
 				}
 				if (isset($settings['cta_dl_dv_redirect_url']) && $settings['cta_dl_dv_redirect_url'] !== ''){
 					$shortcode .= 'cta_visibility_download_redirect_url="' . $settings['cta_dl_dv_redirect_url'] . '" ';
@@ -11847,10 +11892,16 @@ class SR_Audio_Player extends Widget_Base {
 			if (isset($settings['show_duration_filter'])){
 				$shortcode .= 'show_duration_filter="'. $settings['show_duration_filter'] .'" ';
 			}
-			
 			if (isset($settings['track_memory'])){
 				$shortcode .= 'track_memory="'. $settings['track_memory'] .'" ';
 			}
+			if (isset($settings['show_prevnext_bt']) && $settings['show_prevnext_bt']=='true'){
+				$shortcode .= 'show_prevnext_bt="true" ';
+			}
+			if (isset($settings['control_alignment']) && $settings['control_alignment']=='left'){
+				$shortcode .= 'control_alignment="left" ';
+			}
+
 			if (isset($settings['tracklist_soundwave_show']) && $settings['tracklist_soundwave_show'] == 'true'){
 				$shortcode .= 'tracklist_soundwave_show="true" ';
 

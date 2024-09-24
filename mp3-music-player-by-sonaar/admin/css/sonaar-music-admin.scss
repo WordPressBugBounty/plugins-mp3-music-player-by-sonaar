@@ -339,6 +339,7 @@ margin-right:4px;
     background-color: #7400df;
     padding: 5px 10px;
     border-radius: 40px;
+    text-wrap: nowrap;
 }
   /* Tooltip text */
 .cmb2-wrap .srmp3_tooltip .srmp3_tooltiptext {
@@ -1306,6 +1307,7 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
 .srmp3-bulk-wrapper {
     display: flex;
     justify-content: space-between;
+    align-items:center;
 }
 #srmp3-bulkRemove-bt {
     height: -webkit-fill-available;
@@ -1317,6 +1319,19 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     font-size: 14px;
     padding: 5px 10px;
 }*/
+#cmb2-metabox-srmp3_settings_emails .srmp3-bulk-wrapper{
+    justify-content: flex-start;
+    gap:5px;
+    input{
+        height:100%;
+        max-height: 40px;
+        text-transform: uppercase;
+    }
+    @media screen and (max-width: 1480px){
+       flex-direction:column;
+       align-items: flex-start;
+    }
+}
 .srmp3-admin-small-bt{
     vertical-align: middle;
     background-color: #f6f7f7;
@@ -1327,7 +1342,7 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     text-decoration: none;
     border-radius: 2px;
 }
-.srmp3-generate-bt {
+.srmp3-generate-bt, .srmp3-general-admin-button {
     transition: 250ms ease;
     background-color: #7501E0;
     cursor: pointer;
@@ -1337,9 +1352,23 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     border-radius: 4px;
     font-size: 13px;
     padding: 8px 20px;
+    .dashicons{
+        vertical-align: middle;
+        font-size:16px;
+        height:auto;
+    }
     &:hover {
         background-color: #942cf4;
     }
+}
+.srmp3-general-admin-button.showSpinner:before {
+    content: "\f17a";
+    font-family: 'dashicons';
+    font-size: 14px;
+    margin-left: 0px;
+    margin-right: 4px;
+    display: inline-block;
+    vertical-align: middle;
 }
 .srmp3-generate-bt.showSpinner:before {
     content: "\f463";
@@ -1350,7 +1379,7 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     display: inline-block;
     vertical-align: middle;
 }
-.srmp3-generate-bt.showCheckmark:before {
+.srmp3-generate-bt.showCheckmark:before, .srmp3-general-admin-button.showCheckmark:before {
     color: rgb(255, 255, 255);
     content: "\f15e";
     font-family: 'dashicons';
@@ -1360,7 +1389,7 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     display: inline-block;
     vertical-align: middle;
 }
-.srmp3-generate-bt.spinningIcon:before {
+.srmp3-generate-bt.spinningIcon:before, .srmp3-general-admin-button.spinningIcon:before {
     animation: spinIndex 1s linear infinite;
 }
 .srmp3-stopgenerate-bt{
@@ -2113,6 +2142,18 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     animation: spin 1s linear infinite;
 }
 
-
+.form-field[class*="_make_offer_"]{
+    float: inline-start;
+    width: 100%;
+    margin-top: 0px;
+   input{
+    margin-right:5px!important;
+   }
+    label{
+        line-height:16px;
+        display: inline-block;
+        padding: 4px 1em 2px 0;
+    }
+}
 
 

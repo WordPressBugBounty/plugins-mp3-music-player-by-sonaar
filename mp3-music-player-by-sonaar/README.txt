@@ -5,7 +5,7 @@ Donate link: https://sonaar.io
 Requires at least: 4.7
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 5.7.1
+Stable tag: 5.8
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -172,19 +172,21 @@ Everything in free, plus:
 * [NEW!] Ability to add audio watermark automatically generated from your full audio track.
 * [NEW!] Ability to add audio advertising (known as pre-roll or post-roll ads) before or after your audio track.
 * [NEW!] Create Sliders & Coverflow Slides in 1-click.
-* Adaptive Colors: Match the skin of the audio player with your image artwork in real-time. Thanks to our AI algorithms!
 * [NEW!] Share Tracks Feature: Share your track on Facebook, Twitter, WhatsApp, SMS, Emails! You have the option to add a share button to share specific tracks from your tracklist.
 * [NEW!] Add to Favorite Playlist. Visitor and logged-in users can add tracks to their favorites. You can create a page with a player that will contains a list of the user's favorites. Check the settings in WP-Admin > MP3 Player > Settings > Add to Favorites.
 * [NEW!] User Recently Player Track feed type. This feature offers a personalized experience for your site visitors by displaying a player with their most recently played tracks.
 * [NEW!] Remember Track Progress. Enable this feature on your player widget to have tracks resume from where the user last stopped listening. Useful for Audio Books, Podcasts and eLearning.
+* [NEW!] Ask for Email to Access Download. Turn your download buttons into a powerful lead generation tool.
+* [NEW!] Make an Offer / Negotiate Button. Give your audience the flexibility to negotiate the price with WooCommerce.
 * Music Licenses & Contracts for WooCommerce similar to Beatstars, Audiio, Trackclub, Epidemic Sound, Premium beat, Soundee and Airbit, etc.
+* Adaptive Colors: Match the skin of the audio player with your image artwork in real-time. Thanks to our AI algorithms!
 * Keep your RSS Feed and Podcast Show synched with your current Podcast distributor to get new episodes automatically
 * Customize the look and feel of the player directly within Gutenberg Block Editor! No custom CSS is required! Over 70 styling options are available.
 * Elementor Widget with 70+ Styling Options and dynamic fields!
 * Full Lyrics and Karaoke Support. Create Karaoke Player or audio lyrics to your site by using Timed Text Markup Language (TTML).
 * Use CSV File to create playlists.
 * Support ACF, JetEngine, Metabox, etc. for Dynamic Custom Fields
-* [NEW!] Dynamic Visibility: Set visibility rules for the Downloads, Favorites, and Share buttons based on user roles, like administrators or subscribers, or non-logged users. A use case would be to to show the download button exclusively to logged-in users, while directing non-logged users to a sign-up page.
+* Dynamic Visibility: Set visibility rules for the Downloads, Favorites, and Share buttons based on user roles, like administrators or subscribers, or non-logged users. A use case would be to to show the download button exclusively to logged-in users, while directing non-logged users to a sign-up page.
 * Add popup lightbox option for call-to-action buttons beside your tracks. Embed anything from lyrics, videos, html or shortcodes in the Lightbox.
 * Add Audio Player for WooCommerce in product image, shop page and single product template automatically!. Add Buy Now, Add to Cart button with price for your WC products
 * Scrollbar option to scroll within your tracklist
@@ -339,6 +341,26 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.8 =
+- New: Introducing Ask for Email to Access Download for Business Plan users. Turn your download buttons into a powerful lead generation tool. By enabling dynamic visibility on your download button, you can easily configure it to prompt users for their email, after which the file will be delivered automatically. [Learn More](https://sonaar.io/docs/ask-for-email-to-access-download/)
+- New: Introducing Make an Offer / Negotiate Button for Business Plan users. You can give your audience the flexibility to negotiate the price. Say goodbye to rigid pricing structures and hello to customer-driven sales. [Learn More](https://sonaar.io/docs/make-an-offer-negotiate-your-price/)
+- New: Option to display Next/Previous/Tracklist button directly in the mobile sticky bar
+- New: Option to support artwork background image with the shortcode builder
+- New: Collected Emails tab in the plugin settings to export emails collected from the Ask For Email feature
+- New: Option to display the track artwork as a blurred background image in the lightbox (Product Variations, Ask For Emails, Make an Offer)
+- Tweak: Ability to play the related audio file from the popup modal
+- Tweak: Moved Download Button settings into its own tab in the plugin settings
+- Tweak: You can now add a next/previous button on the boxed layout
+- Tweak: When disabling the continuous player, it was still displaying on the frontend until cookies were cleared
+- Fix: Audio Previews generating a Content-Length header not set in some case
+- Fix: Prevent JS error with the sticky CTA when playing another player widget
+- Fix: Matomo Plugin not collecting player statistic since their last update
+- Fix: Display issues with some themes that use the .content class
+- Fix: Sticky Player not showing in some conditions caused by jQuery
+- Fix: PHP notice with the Elementor Editor in some conditions
+- Fix: Track Ordering when ordered by total sales
+- Fix: Excluding continuous player on the product pages with custom slugs is now working
+
 = 5.7.1 =
 - New: Setup Wizard to get started when you activate the plugin a first time.
 - Tweak: Improved translation strings so they can be much easier to translate

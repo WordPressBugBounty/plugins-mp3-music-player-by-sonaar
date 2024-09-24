@@ -219,7 +219,7 @@ class Sonaar_Music_Public {
 
 			// CTA Pop-up
 			$ctaPopupFont = Sonaar_Music::get_option('cta-popup-typography', 'srmp3_settings_popup' );
-			$data .= $this->sr_generateTypoStyle($ctaPopupFont, 'div#sonaar-modal, article.srp_note, div#sonaar-modal h1, div#sonaar-modal h2, div#sonaar-modal h3, div#sonaar-modal h4, div#sonaar-modal h5');
+			$data .= $this->sr_generateTypoStyle($ctaPopupFont, 'div#sonaar-modal, article.srp_note, div#sonaar-modal h1, div#sonaar-modal h2, div#sonaar-modal h3, div#sonaar-modal h4, div#sonaar-modal h5, div#sonaar-modal label');
 			$data .= ( Sonaar_Music::get_option('cta-popup-background', 'srmp3_settings_popup') !== '' )? 'div#sonaar-modal .sr_popup-content, .iron-audioplayer .srp_note{background-color:' . Sonaar_Music::get_option('cta-popup-background', 'srmp3_settings_popup') . ';}' : '';
 			$data .= ( Sonaar_Music::get_option('cta-popup-close-btn-color', 'srmp3_settings_popup') !== '' )? '.sr_close svg{fill:' . Sonaar_Music::get_option('cta-popup-close-btn-color', 'srmp3_settings_popup') . ';}' : '';
 		}
@@ -270,6 +270,10 @@ class Sonaar_Music_Public {
 			--srp-global-music_player_wc_bt_bgcolor: ' . Sonaar_Music::get_option('music_player_wc_bt_bgcolor', 'srmp3_settings_widget_player') . ';
 			--srp-global-modal-btn-txt-color: ' . Sonaar_Music::get_option('cta-popup-btn-txt-color', 'srmp3_settings_popup') . ';
 			--srp-global-modal-btn-bg-color: ' . Sonaar_Music::get_option('cta-popup-btn-bg-color', 'srmp3_settings_popup') . ';
+			--srp-global-modal-form-input-bg-color: ' . Sonaar_Music::get_option('cta_popup_form_input_background', 'srmp3_settings_popup') . ';
+			--srp-global-modal-form-input-border-color: ' . Sonaar_Music::get_option('cta_popup_form_input_border', 'srmp3_settings_popup') . ';
+			--srp-global-modal-form-input-color: ' . Sonaar_Music::get_option('cta_popup_form_input_color', 'srmp3_settings_popup') . ';
+			
 		  }';
 		if( $music_player_progress_color !== '' ){
 			$data .= '.iron-audioplayer .sonaar_fake_wave .sonaar_wave_cut rect{fill:' . $music_player_progress_color . ';}';
