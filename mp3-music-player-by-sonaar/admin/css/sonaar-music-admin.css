@@ -243,6 +243,10 @@
   content: '\e836'; }
 
 /* '' */
+.sricon-x-twitter:before {
+  content: '\e87b'; }
+
+/* '' */
 .sricons-logo:before,
 #menu-posts-album .dashicons-before.dashicons-format-audio:before, #menu-posts-sr_playlist .dashicons-before:before {
   content: "\e812" !important; }
@@ -309,6 +313,8 @@
   background-color: #fff;
   padding: 15px;
   z-index: 998; }
+  *[class*="page_srmp3_settings"] .nav-tab-wrapper li {
+    display: block; }
 
 *[class*="page_srmp3_settings"] .nav-tab-wrapper {
   max-width: 370px; }
@@ -1408,22 +1414,6 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
 
 .srmp3-cmb2-preview-file .file-status span {
   display: none; }
-
-/*.srmp3-generate-bt {
-    font-size: 14px;
-    padding: 5px 10px;
-}*/
-#cmb2-metabox-srmp3_settings_emails .srmp3-bulk-wrapper {
-  justify-content: flex-start;
-  gap: 5px; }
-  #cmb2-metabox-srmp3_settings_emails .srmp3-bulk-wrapper input {
-    height: 100%;
-    max-height: 40px;
-    text-transform: uppercase; }
-  @media screen and (max-width: 1480px) {
-    #cmb2-metabox-srmp3_settings_emails .srmp3-bulk-wrapper {
-      flex-direction: column;
-      align-items: flex-start; } }
 
 .srmp3-admin-small-bt {
   vertical-align: middle;

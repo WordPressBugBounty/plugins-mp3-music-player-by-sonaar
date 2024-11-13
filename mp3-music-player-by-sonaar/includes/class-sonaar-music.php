@@ -275,11 +275,10 @@ class Sonaar_Music {
 			$srmp3_settings_favorites = Sonaar_Music::convertSomeOptionValue(( is_array( get_option('srmp3_settings_favorites') ) ) ?  get_option('srmp3_settings_favorites') : array());
 			$srmp3_settings_audiopreview = Sonaar_Music::convertSomeOptionValue(( is_array( get_option('srmp3_settings_audiopreview') ) ) ?  get_option('srmp3_settings_audiopreview') : array());
 			$srmp3_settings_share = Sonaar_Music::convertSomeOptionValue(( is_array( get_option('srmp3_settings_share') ) ) ?  get_option('srmp3_settings_share') : array());
-			$srmp3_settings_emails = Sonaar_Music::convertSomeOptionValue(( is_array( get_option('srmp3_settings_emails') ) ) ?  get_option('srmp3_settings_emails') : array());
 			$srmp3_settings_stats = Sonaar_Music::convertSomeOptionValue(( is_array( get_option('srmp3_settings_stats') ) ) ?  get_option('srmp3_settings_stats') : array());
 			$srmp3_settings_popup = Sonaar_Music::convertSomeOptionValue(( is_array( get_option('srmp3_settings_popup') ) ) ?  get_option('srmp3_settings_popup') : array());
 
-			$result = array_merge($srmp3_settings_general, $srmp3_settings_widget_player, $srmp3_settings_sticky_player, $srmp3_settings_download, $srmp3_settings_woocommerce, $srmp3_settings_favorites, $srmp3_settings_audiopreview, $srmp3_settings_share, $srmp3_settings_emails, $srmp3_settings_stats, $srmp3_settings_popup);
+			$result = array_merge($srmp3_settings_general, $srmp3_settings_widget_player, $srmp3_settings_sticky_player, $srmp3_settings_download, $srmp3_settings_woocommerce, $srmp3_settings_favorites, $srmp3_settings_audiopreview, $srmp3_settings_share, $srmp3_settings_stats, $srmp3_settings_popup);
 
 			return ( is_array( $result ) )? $result : array();
 		}

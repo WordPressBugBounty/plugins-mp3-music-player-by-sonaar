@@ -93,6 +93,7 @@
 .sricon-spinner:before { content: '\e97b'; } /* '' */
 .sricon-shuffle:before { content: '\e83d'; } /* '' */
 .sricon-share:before { content: '\e836'; } /* '' */
+.sricon-x-twitter:before { content: '\e87b'; } /* '' */
 
 
 .sricons-logo:before,
@@ -163,6 +164,9 @@
     background-color: #fff;
     padding: 15px;
     z-index:998;
+    li{
+        display:block;
+    }
 }
 *[class*="page_srmp3_settings"] .nav-tab-wrapper {
     max-width:370px;
@@ -1315,23 +1319,7 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
 .srmp3-cmb2-preview-file .file-status span{
     display:none;
 }
-/*.srmp3-generate-bt {
-    font-size: 14px;
-    padding: 5px 10px;
-}*/
-#cmb2-metabox-srmp3_settings_emails .srmp3-bulk-wrapper{
-    justify-content: flex-start;
-    gap:5px;
-    input{
-        height:100%;
-        max-height: 40px;
-        text-transform: uppercase;
-    }
-    @media screen and (max-width: 1480px){
-       flex-direction:column;
-       align-items: flex-start;
-    }
-}
+
 .srmp3-admin-small-bt{
     vertical-align: middle;
     background-color: #f6f7f7;

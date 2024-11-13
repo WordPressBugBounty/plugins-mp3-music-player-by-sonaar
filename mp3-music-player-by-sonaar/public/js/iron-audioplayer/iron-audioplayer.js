@@ -1,3 +1,5 @@
+IRON.previousTrackThreshold = 2; //The number of seconds a track must play before the "Previous" button resets the track to the beginning.
+
 IRON.audioPlayer = (function ($) {
   "use strict";
   var autoplayEnable;
@@ -307,6 +309,11 @@ IRON.audioPlayer = (function ($) {
   }
 
   function previous(audioPlayer, $audio_el, playlist) {
+    if( $audio_el.currentTime > IRON.previousTrackThreshold ){ //Resets the track to the beginning Or go to the previous track.
+        $audio_el.currentTime = 0;
+        return;
+    }
+
     var currentTrack = audioPlayer.data("currentTrack");
     var nextTrack = currentTrack - 1;
     playlist.find("li").eq(nextTrack).find("a.audio-track").click();

@@ -267,6 +267,9 @@ class SRMP3_ShortcodeBuilder {
         }
     }
     public function reset_shortcodeBuilder_callback(){
+        if (!current_user_can('manage_options')) {
+            wp_die('Access Denied');
+        }
         if (!isset($_POST['nonce']) || !wp_verify_nonce($_POST['nonce'], 'sonaar_music_admin_ajax_nonce')) {
             wp_die('Nonce validation failed');
         }

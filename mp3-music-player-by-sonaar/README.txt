@@ -3,9 +3,9 @@ Contributors: sonaar, eduplessis
 Tags: MP3, music player, podcast player, audio player, woocommerce
 Donate link: https://sonaar.io
 Requires at least: 4.7
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 5.8
+Stable tag: 5.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,7 @@ Everything in free, plus:
 * Continuous Audio Playback / Persistent Player
 * Full Support for WooCommerce. [View WooCommerce Demo](https://beatstore.sonaar.io/rebirth/)
 * Real-time Animated Audio Spectrum Option
+* [NEW!] Advanced Triggers. Engage listeners with playback actions and download buttons, including previews, watermarks, ads, popups, redirects, scrolling, and role-based interactive enhancements.
 * [NEW!] Option to display audio Waveform for each tracks in the tracklist.
 * [NEW!] Search bar within your tracklist.
 * [NEW!] Filter Dropdowns & Tag Buttons.
@@ -341,6 +342,26 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.9 =
+- New: Introducing Advanced Triggers. Engage listeners with playback actions and download buttons, including previews, watermarks, ads, popups, redirects, scrolling, and role-based interactive enhancements. [Learn More](https://sonaar.io/tips-and-tricks/advanced-triggers-in-mp3-audio-player-pro/)
+- New: Add PHP filters for developers to filter track title, album title, artist name and album covers with their own custom fields
+- Tweak: Improved the loading speed in both frontend and backend
+- Tweak: Updated the Twitter icon to the new X logo
+- Tweak: The previous button now resets the track to the beginning if over 2 seconds have played, or skips to the previous track
+- Tweak: The single template shortcode in the settings is now effective for the taxonomy template as well
+- Tweak: Merged v5.8 Collected Emails to its own CPT
+- Tweak: Sticky Player Metabox now display only on public CPT
+- Fix: Excluded Categories now working with Post Categories
+- Fix: issue when using barbaJS and the share/favorite buttons
+- Fix: Issue with Search Widget and WooCommerce Archive when using a block theme
+- Fix: Remember Track Progress option now working from global settings
+- Fix: Display Artist Name below Track Title option since last Elementor update
+- Fix: User Recently Played Track when we start track from the player widget
+- Fix: Audio Preview not working in some special cases
+- Fix: Multiplayer Soundwaves issue
+- Fix: Minor Admin Tweaks and JS optimization
+- Fix: Resolved a security vulnerability
+
 = 5.8 =
 - New: Introducing Ask for Email to Access Download for Business Plan users. Turn your download buttons into a powerful lead generation tool. By enabling dynamic visibility on your download button, you can easily configure it to prompt users for their email, after which the file will be delivered automatically. [Learn More](https://sonaar.io/docs/ask-for-email-to-access-download/)
 - New: Introducing Make an Offer / Negotiate Button for Business Plan users. You can give your audience the flexibility to negotiate the price. Say goodbye to rigid pricing structures and hello to customer-driven sales. [Learn More](https://sonaar.io/docs/make-an-offer-negotiate-your-price/)
@@ -362,7 +383,7 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 - Fix: Excluding continuous player on the product pages with custom slugs is now working
 
 = 5.7.1 =
-- New: Setup Wizard to get started when you activate the plugin a first time.
+- New: Setup Wizard to get started when you activate the plugin a first time
 - Tweak: Improved translation strings so they can be much easier to translate
 - Tweak: Display notice to admin user when max_input_vars is not enough
 - Fix: Issue when removing Favorites if you are not using the sticky player
@@ -370,36 +391,36 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 - Fix: Issue with pagination if you are not using the sticky player
 - Fix: Issue with Preview Generation when using .dev domain
 - Fix: PHP 8.2 Warning - Creation of dynamic property is deprecated
-= Fix: Security Patch
+- Fix: Security Patch
 
 = 5.7.0.1 =
-Fix: Audio Preview not generating with WooCommerce or Classic Editor Post
-Fix: Warning: Undefined array key "show_miniplayer_note_bt"
+- Fix: Audio Preview not generating with WooCommerce or Classic Editor Post
+- Fix: Warning: Undefined array key "show_miniplayer_note_bt"
 
 = 5.7 =
-New: Audio Previews, Audio Watermarks, Audio Ads, Fade-in and Fade-out audio generation in 1-click are now available for ALL our Business Plan (or higher) users without the needs to have FFMPEG installed! All audio processing is done off-site via our external API server, ensuring your audio files remain hosted on your own server while leveraging our external processing capabilities.
-New: Option to set an info icon button on the mini player widget to display the track description.
-Tweak: You can now set an external URL for the audio preview.
-Tweak: Unified the Repeat Icon size with the other control buttons.
-Fix: JS error related to srp_var in edit post area
-Fix: Prevent PHP error with third party plugins using CMB2 conditionals.
-Fix: Shuffle button not highlighted if Enable Shuffle is set on the player widget
-Fix: Avoid scrolling to top when using pagination. Add the class srp-scrolltotracklisttop-disable to the player to disable the auto scroll.
-Removed sonaar_events table creation on plugin activation. Built-in stats are officially deprecated.
-Code Optimization
+- New: Audio Previews, Audio Watermarks, Audio Ads, Fade-in and Fade-out audio generation in 1-click are now available for ALL our Business Plan (or higher) users without the needs to have FFMPEG installed! All audio processing is done off-site via our external API server, ensuring your audio files remain hosted on your own server while leveraging our external processing capabilities.
+- New: Option to set an info icon button on the mini player widget to display the track description
+- Tweak: You can now set an external URL for the audio preview
+- Tweak: Unified the Repeat Icon size with the other control buttons
+- Fix: JS error related to srp_var in edit post area
+- Fix: Prevent PHP error with third party plugins using CMB2 conditionals
+- Fix: Shuffle button not highlighted if Enable Shuffle is set on the player widget
+- Fix: Avoid scrolling to top when using pagination. Add the class srp-scrolltotracklisttop-disable to the player to disable the auto scroll
+- Removed sonaar_events table creation on plugin activation. Built-in stats are officially deprecated
+- Code Optimization
 
 = 5.6 =
-New: Add Repeat Control Buttons in the widget players. You can enable it site-wide from WP-Admin > MP3 Player > Widget/Sticky Player > Display Repeat Button. Additionally, you can enable it for individual widget instances.
-New: Azuracast radio support to display whats currently playing
-Tweak: Shuffle Icon design
-Tweak: Added title attribute for player controls. You can translate them in MP3 Player > Settings > Widget Player
-Tweak: New action hook srmp3_pre_get_playlist for get_playlist function
-Fix: Issue with Elementor DB Update cause a fatal error in some case
-Fix: Track color titles in shortcode builder in darkmode.
-Fix: Duplicate search value with single quote, with the Right Single Quotation Mark Hexo code. Eg : Search for "O'Brien" and "O’Brien"
-Fix: Compatibility issue with Icecast Player Plugin.
-Fix: Sticky Player download button: redirection issue when condition is not Met
-Fix: Security patch related with XSS in some case
+- New: Add Repeat Control Buttons in the widget players. You can enable it site-wide from WP-Admin > MP3 Player > Widget/Sticky Player > Display Repeat Button. Additionally, you can enable it for individual widget instances.
+- New: Azuracast radio support to display whats currently playing
+- Tweak: Shuffle Icon design
+- Tweak: Added title attribute for player controls. You can translate them in MP3 Player > Settings > Widget Player
+- Tweak: New action hook srmp3_pre_get_playlist for get_playlist function
+- Fix: Issue with Elementor DB Update cause a fatal error in some case
+- Fix: Track color titles in shortcode builder in darkmode.
+- Fix: Duplicate search value with single quote, with the Right Single Quotation Mark Hexo code. Eg : Search for "O'Brien" and "O’Brien"
+- Fix: Compatibility issue with Icecast Player Plugin.
+- Fix: Sticky Player download button: redirection issue when condition is not Met
+- Fix: Security patch related with XSS in some case
 
 = 5.5 =
 - New: Dark mode for the admin settings and shortcode builder

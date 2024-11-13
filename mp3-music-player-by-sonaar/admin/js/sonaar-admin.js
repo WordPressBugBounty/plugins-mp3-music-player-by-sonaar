@@ -79,6 +79,7 @@
 		// Add separators after specified menu items
 		addSeparator('#menu-posts-sr_playlist li a[href^="edit-tags.php?taxonomy=playlist-tag&post_type=sr_playlist"]');
 		addSeparator('#menu-posts-album li a[href^="edit-tags.php?taxonomy=playlist-tag&post_type=album"]');
+		//addSeparator('#menu-posts-sr_playlist li a[href^="edit.php?post_type=sr_email_submission"]');
 		addSeparator('#menu-posts-sr_playlist li a[href^="edit.php?post_type=usage-terms"]');
 		addSeparator('#menu-posts-sr_playlist li a[href^="edit.php?post_type=sr_playlist&page=srmp3_settings_shortcodebuilder"]');
 		addSeparator('#menu-posts-album li a[href^="edit.php?post_type=album&page=srmp3_settings_shortcodebuilder"]');
@@ -645,7 +646,7 @@
 		// Observer for style changes on existing and dynamically added .wp-color-result elements
 		var styleObserver = new MutationObserver(function(mutations) {
 			mutations.forEach(function(mutation) {
-				console.log($(mutation.target));
+				//console.log($(mutation.target));
 				if (mutation.attributeName === 'style') {
 					clearTimeout(debounceTimer);
 					debounceTimer = setTimeout(() => {

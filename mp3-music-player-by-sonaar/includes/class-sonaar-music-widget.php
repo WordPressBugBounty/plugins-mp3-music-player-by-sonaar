@@ -364,6 +364,7 @@ class Sonaar_Music_Widget extends WP_Widget{
                 $sliderSource = ( isset($this->shortcodeParams['slide_source']) && $this->shortcodeParams['slide_source'] == 'track' || $import_file || $feed )? 'track': 'post'; //track or post
                 $dataSwiperSource = 'data-swiper-source="' . $sliderSource . '" ';
                 $sliderParams = (isset($this->shortcodeParams['slider_param']) && $this->shortcodeParams['slider_param'] != 'true')? $this->shortcodeParams['slider_param']: "{loop:true,spaceBetween:5,slidesPerView:3,effect:'coverflow',centeredSlides:true}"; 
+                $sliderParams = wp_kses( $sliderParams, array() );
                 $sliderPagination = ($this->getSliderParams('pagination', $sliderParams) != null && $this->getSliderParams('pagination', $sliderParams) !== 'false')? true : false ;
                 $sliderNavigation = ($this->getSliderParams('navigation', $sliderParams) != null && $this->getSliderParams('navigation', $sliderParams) !== 'false')? true : false ;
                 $sliderScrollbar = ($this->getSliderParams('scrollbar', $sliderParams) != null  && $this->getSliderParams('scrollbar', $sliderParams) !== 'false')? true : false ;
@@ -1144,8 +1145,9 @@ class Sonaar_Music_Widget extends WP_Widget{
             }
 
             if(function_exists( 'run_sonaar_music_pro' )){
-                $commentStart = (count($cfData) === 0)? '<!--START CF DATA-->': ''; //This comment is used by the elementor_remove_cf_data() function;
-                $commentEnd = (count($cfData) === 0)? '<!--END CF DATA-->': '';
+                $commentStart = (count($cfData) === 0 )? '<!--START CF DATA-->': ''; //This comment is used by the elementor_remove_cf_data() function; 
+                $commentEnd = (count($cfData) === 0  )? '<!--END CF DATA-->': '';
+
                 if(isset($cf_data_formatted) && !( isset($this->shortcodeParams['hide_cf_data']) && $this->shortcodeParams['hide_cf_data'] == 'true') ){
                     $cf_data_formatted = array_unique(array_merge($cf_data_formatted, $cfData)); //Merge required CF from the miniplayer meta heading and those required for the filters 
                 }else if(count($cfData) > 0){
@@ -1158,7 +1160,6 @@ class Sonaar_Music_Widget extends WP_Widget{
                     $cf_data_formatted = '';
                 }
             }
-
 
 
             /*
@@ -1493,7 +1494,7 @@ class Sonaar_Music_Widget extends WP_Widget{
                 $widgetPart_slider .= $navigationTemplate;
                 $widgetPart_slider .= '</div>';  // swiper-box-navigation
             }
-            $widgetPart_slider .= '<div class="srp_swiper swiper' . $swiperClass . '" ' . $dataSwiperSource . '  data-params="' . $sliderParams . '" >';
+            $widgetPart_slider .= '<div class="srp_swiper swiper' . esc_attr($swiperClass) . '" ' . esc_attr($dataSwiperSource) . '  data-params="' .  esc_attr( $sliderParams ) . '" >';
             $widgetPart_slider .= '<div class="swiper-wrapper">';
             $slideList = $playlist['tracks'];
             if( $sliderSource == 'post' ){
@@ -1671,15 +1672,12 @@ class Sonaar_Music_Widget extends WP_Widget{
             </div>';
         }
 
-        $track_memory = false;
-        if (isset($this->shortcodeParams['track_memory'])) {
-            $track_memory = $this->shortcodeParams['track_memory'];
-            
-            if ($track_memory === 'true') {
+        $track_memory = (Sonaar_Music::get_option('track_memory', 'srmp3_settings_general') === 'true') ? true : false;
+        if ( isset($this->shortcodeParams['track_memory']) ){
+            if ( $this->shortcodeParams['track_memory'] === 'true' ) {
                 $track_memory = true;
-            } elseif ($track_memory === 'default') {
-                $track_memory = (Sonaar_Music::get_option('track_memory', 'srmp3_settings_general') === 'true') ? true : false;
-            } else {
+            }
+            if ( $this->shortcodeParams['track_memory'] === 'false' ) {
                 $track_memory = false;
             }
         }
@@ -2154,38 +2152,29 @@ class Sonaar_Music_Widget extends WP_Widget{
         }else{
             $posts_not_in = array(); 
         }*/
+        $sr_postypes = Sonaar_Music_Admin::get_cpt($all = true);
+
         $posts_not_in_array = ($posts_not_in) ? explode(',', $posts_not_in) : array();
         $category_not_in_array = ($category_not_in) ? explode(',', $category_not_in) : array();
 
         if (!empty($category_not_in_array)) {
-            // For product_cat taxonomy
-            if ( taxonomy_exists( 'product_cat' ) ) {
-                $tax_query[] = array(
-                    'taxonomy' => 'product_cat',
-                    'field'    => 'term_id',
-                    'terms'    => $category_not_in_array,
-                    'operator' => 'NOT IN',
-                );
-            }
-            if ( taxonomy_exists( 'playlist-category' ) ) {
-                $tax_query[] = array(
-                    'taxonomy' => 'playlist-category',
-                    'field'    => 'term_id',
-                    'terms'    => $category_not_in_array,
-                    'operator' => 'NOT IN',
-                );
-            }
-            if ( taxonomy_exists( 'podcast-show' ) ) {
-                $tax_query[] = array(
-                    'taxonomy' => 'podcast-show',
-                    'field'    => 'term_id',
-                    'terms'    => $category_not_in_array,
-                    'operator' => 'NOT IN',
-                );
+            // Loop through each post type to get associated taxonomies
+            foreach ($sr_postypes as $post_type) {
+                $taxonomies = get_object_taxonomies($post_type, 'names');
+                
+                foreach ($taxonomies as $this_taxonomy) {
+                    if (taxonomy_exists($this_taxonomy)) {
+                        $tax_query[] = array(
+                            'taxonomy' => $this_taxonomy,
+                            'field'    => 'term_id',
+                            'terms'    => $category_not_in_array,
+                            'operator' => 'NOT IN',
+                        );
+                    }
+                }
             }
         }
 
-        $sr_postypes = Sonaar_Music_Admin::get_cpt($all = true);
         // If specific terms are provided, use tax_query to fetch related post IDs
         if ($terms != 'all') {
             // Get the post types
@@ -2639,8 +2628,21 @@ class Sonaar_Music_Widget extends WP_Widget{
                             }
                         }
                         $storeTag = ( $isProductArchive ) ? 'div' : 'a'; //If product archive, use div instead of a tag because the <a> tag is not required on the product archive and they broke <a> tag from woocommerce.
-                        $song_store_list_content .= '<'. $storeTag . ' ' . $href .  esc_html($download) . ' class="' . esc_attr($classes) . '" target="' .  esc_attr($store['store-target']) . '" title="' . esc_attr($store['store-name']) . '" aria-label="' . esc_attr($store['store-name']) . '" data-source-post-id="' . esc_attr($track['sourcePostID']) . '" data-store-id="' . esc_attr($trackIndex . '-' . $key2) .'"'.$extraAttributes.' tabindex="1"><i class="' . esc_html($store['store-icon']) . '"></i>' . $label . '</'. $storeTag .'>';
-                        
+                        $song_store_list_content .= '<' . $storeTag . ' ' . $href . esc_html($download) . 
+                            ' class="' . esc_attr($classes) . '" ' .
+                            'target="' . esc_attr($store['store-target']) . '" ' .
+                            'title="' . esc_attr($store['store-name']) . '" ' .
+                            'aria-label="' . esc_attr($store['store-name']) . '" ' .
+                            'data-source-post-id="' . esc_attr($track['sourcePostID']) . '" ' .
+                            'data-store-id="' . esc_attr($trackIndex . '-' . $key2) . '" ' .
+                            (strpos($classes, 'sr_store_force_share_bt') !== false || 
+                            strpos($classes, 'srp-fav-bt') !== false 
+                                ? 'data-barba-prevent="all" ' 
+                                : '') . 
+                            $extraAttributes . 
+                            ' tabindex="1"><i class="' . esc_html($store['store-icon']) . '"></i>' . 
+                            $label . 
+                            '</' . $storeTag . '>';
                         $playlist_has_ctas = true;
                     }
                 }
@@ -4407,7 +4409,15 @@ class Sonaar_Music_Widget extends WP_Widget{
                         $album_tracks[$i]["album_store_list"] = $album_store_list;
                         $album_tracks[$i]['sourcePostID'] = $a->ID;
                         $album_tracks[$i]['has_lyric'] = $has_lyric;
-                        
+
+                        //Filters. See Documentation
+                        $album_tracks[$i]["track_title"]        = apply_filters('custom_track_title', $album_tracks[$i]["track_title"], $a);
+                        $album_tracks[$i]["album_title"]        = apply_filters('custom_album_title', $album_tracks[$i]["album_title"], $a);
+                        $album_tracks[$i]["track_artist"]       = apply_filters('custom_track_artist', $album_tracks[$i]["track_artist"], $a);
+                        $album_tracks[$i]["poster"]             = apply_filters('custom_poster_image', $album_tracks[$i]["poster"], $a);
+                        if(isset($thumb_id)){
+                            $album_tracks[$i]["track_image_id"] = apply_filters('custom_track_image_id', $album_tracks[$i]["track_image_id"], $a);
+                        }
                         //check if track_length is less than 45 minutes
                         $album_tracks[$i]["peak_allow_frontend"] = false;
                         if ($track_length) {

@@ -15,11 +15,11 @@
             var field = $(this);
             var conditions = JSON.parse(field.attr('data-conditional'));
             var showField = conditions.logic === 'AND' ? true : false;
-    
+
             conditions.conditions.forEach(function(condition) {
-                var targetField;
-                var targetValue;
-    
+                var targetField, targetValue;
+                var conditionValue = Array.isArray(condition.value) ? condition.value : [condition.value]; // Ensure value is an array
+
                 // Determine the type of input and get the value accordingly
                 if ($('#' + condition.id).attr('type') === 'checkbox') {
                     targetValue = $('#' + condition.id).is(':checked').toString(); // Get "true" or "false" for checkbox
@@ -29,16 +29,16 @@
                 } else {
                     targetValue = $('#' + condition.id).val(); // Default to getting value directly
                 }
-    
-                var conditionMet = targetValue === condition.value;
-    
+
+                var conditionMet = conditionValue.includes(targetValue);
+
                 if (conditions.logic === 'AND') {
                     showField = showField && conditionMet;
                 } else {
                     showField = showField || conditionMet;
                 }
             });
-    
+
             if (showField) {
                 field.closest('.cmb-row').show();
             } else {

@@ -95,6 +95,7 @@ class Sonaar_Music_Admin {
             require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/library/cmb-field-select2-master/cmb-field-select2.php';
             require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/library/Shortcode_Button/shortcode-button.php';  
             require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/library/Shortcode_Builder/shortcode_builder.php';
+            require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/library/cmb2-sr-post-search-ajax/sr-post-search-ajax.php';
             if (did_action('elementor/loaded')) {
                 require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/srmp3_templates_importer.php';
             }
@@ -453,10 +454,25 @@ class Sonaar_Music_Admin {
                 ));
             }
 		}
-       
-        if ($hook == 'term.php' || $hook == SR_PLAYLIST_CPT . '_page_iron_music_player' || $hook == SR_PLAYLIST_CPT . '_page_sonaar_music_promo' || $hook == SR_PLAYLIST_CPT . '_page_sonaar_music_promo' || strpos($hook, SR_PLAYLIST_CPT . '_page_srmp3_settings_') === 0) {
-                wp_enqueue_script( 'cmb2_conditionallogic-js', plugin_dir_url( __FILE__ ) . 'library/cmb2-conditional-logic/cmb2-conditional-logic.min.js' , '', '1.0.0', true );  // Used for plugin settings page only. it does not work on group repeater fields
+        
+        $screen = get_current_screen();
+
+        if (
+            $hook == 'term.php' || 
+            $hook == SR_PLAYLIST_CPT . '_page_iron_music_player' || 
+            $hook == SR_PLAYLIST_CPT . '_page_sonaar_music_promo' || 
+            strpos($hook, SR_PLAYLIST_CPT . '_page_srmp3_settings_') === 0 ||
+            (isset($screen->post_type) && $screen->post_type === 'sr_advanced_triggers' && ($screen->base === 'post' || $screen->base === 'edit'))
+        ) {
+            wp_enqueue_script(
+                'cmb2_conditionallogic-js', 
+                plugin_dir_url( __FILE__ ) . 'library/cmb2-conditional-logic/cmb2-conditional-logic.min.js', 
+                '', 
+                '1.0.0', 
+                true
+            );  // Used for plugin settings page and CPT 'sr_advanced_triggers'
         }
+
         if (strpos($hook, SR_PLAYLIST_CPT . '_page_srmp3_settings_') === 0) {
             wp_enqueue_script( 'cmb2_image_select_metafield-js', plugin_dir_url( __FILE__ ) . 'library/cmb2-image-select-field-type/image_select_metafield.js' , '', '1.0.0', true );  // Used for plugin settings page only. it does not work on group repeater fields
             wp_enqueue_script( 'sonaar-music', plugin_dir_url( __DIR__ ) . 'public/js/sonaar-music-public.js', array( 'jquery' ), $this->version, true ); // used for peak generation
@@ -5588,66 +5604,6 @@ class Sonaar_Music_Admin {
 
 
 
-
-
-
-
-            if ( function_exists( 'run_sonaar_music_pro' ) && get_site_option('SRMP3_ecommerce') == '1'){
-                /**
-                * Registers fifth options page, and set main item as parent.
-                */
-                $args = array(
-                    'id'           => 'srmp3_settings_emails',
-                    'menu_title'   => esc_html__( 'Collected Emails', 'sonaar-music' ),
-                    'title'        => esc_html__( 'Collected Emails', 'sonaar-music' ),
-                    'object_types' => array( 'options-page' ),
-                    'option_key'   => 'srmp3_settings_emails',
-                    'parent_slug'  => 'edit.php?post_type=' . SR_PLAYLIST_CPT,
-                    'tab_group'    => 'yourprefix_main_options',
-                    'tab_title'    => esc_html__( 'Collected Emails', 'sonaar-music' ),
-                );
-
-                // 'tab_group' property is supported in > 2.4.0.
-                if ( version_compare( CMB2_VERSION, '2.4.0' ) ) {
-                    $args['display_cb'] = 'yourprefix_options_display_with_tabs';
-                }
-
-                $email_options = new_cmb2_box( $args );
-                array_push($options_name, $email_options);
-                $email_options->add_field( array(
-                    'name'          => esc_html__('Manage Collected Emails', 'sonaar-music'),
-                    'type'          => 'title',
-                    'id'            => 'email_export_title',
-                    'description'   => sprintf(
-                        '<div>%1$s</div><br>
-                        <div class="srmp3-bulk-wrapper">
-                            <div>
-                                <label for="start_date">%3$s</label>
-                                <input type="date" id="start_date" name="start_date">
-                                
-                                <label for="end_date">%4$s</label>
-                                <input type="date" id="end_date" name="end_date">
-                                
-                            </div>
-                            <button id="srmp3_export_emails" class="srmp3-general-admin-button showSpinner">%2$s</button>
-                            <button id="srmp3_delete_emails" class="srmp3-general-admin-button deleteSpinner">  <span class="dashicons dashicons-trash"></span>%5$s</button>
-                        </div>',
-                        esc_html__('Use this tool to export emails in a CSV file, which can be easily imported into any mailing platform that accepts CSV imports.', 'sonaar-music'),
-                        esc_html__('Export Email in CSV format', 'sonaar-music'), // %2$s
-                        esc_html__('Start Date:', 'sonaar-music'), // %3$s
-                        esc_html__('End Date:', 'sonaar-music'),   // %4$s
-                        esc_html__('Delete Collected Emails', 'sonaar-music') // %5$s
-                    ),
-                ));
-                
-                
-            }
-
-
-
-
-
-
             /**
              * Registers Settings Tools options page, and set main item as parent.
              */
@@ -6689,7 +6645,6 @@ class Sonaar_Music_Admin {
                 'Download Button'           => 'srmp3_settings_download',
                 'WooCommerce Settings'      => 'srmp3_settings_woocommerce',
                 'Popup Settings'            => 'srmp3_settings_popup',
-                'Ask for Email'             => 'srmp3_settings_emails',
                 'Stats Settings'            => 'srmp3_settings_stats',
                 'Favorites Settings'        => 'srmp3_settings_favorites',
                 'Share Settings'            => 'srmp3_settings_share',
@@ -8839,7 +8794,6 @@ class Sonaar_Music_Admin {
             'srmp3_settings_audiopreview' => true,
             'srmp3_settings_download' => true,
             'srmp3_settings_woocommerce' => true,
-            'srmp3_settings_emails' => true,
             'srmp3_settings_popup' => true,
             'srmp3_settings_stats' => true,
             'srmp3_settings_tts' => true,

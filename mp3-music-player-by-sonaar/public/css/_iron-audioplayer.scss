@@ -578,7 +578,9 @@ article div.iron-audioplayer ol li {
           }
         }
       }
-
+      a.song-store:focus{
+        outline:unset;
+      }
       .song-store {
         //margin: 0 5px;
         display: flex;
@@ -1489,6 +1491,7 @@ a.tracklist-item-title:hover {
     transition: opacity 0.3s;
     &.srp_hide{
       opacity: 0;
+      pointer-events: none;
     }
   }
 
@@ -2067,6 +2070,7 @@ a.tracklist-item-title:hover {
 .sricon-3-dots-h:before { content: '\e837'; } /* '' */
 .sricon-close:before { content: '\e838'; } /* '' */
 .sricon-3-dots-v:before { content: '\e839'; } /* '' */
+.sricon-x-twitter:before { content: '\e87b'; } /* '' */
 /* '' */
 
 /*

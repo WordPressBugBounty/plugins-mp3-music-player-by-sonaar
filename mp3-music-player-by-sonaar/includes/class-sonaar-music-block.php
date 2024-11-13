@@ -86,7 +86,6 @@ class Sonaar_Block {
 	 * @return void
 	 */
 	function sonaar_block_editor_style_script() {
-
 		$sonaar_mp3player = 'sonaar-music-mp3player';
 
 		if ( function_exists( 'run_sonaar_music_pro' ) ){
@@ -99,10 +98,6 @@ class Sonaar_Block {
 		// Register the tb1 block
 		wp_register_script( 'sonaar-block-script', plugin_dir_url( dirname( __FILE__ ) ) . 'build/index.js', array( 'jquery', $sonaar_mp3player,'wp-blocks', 'wp-i18n', 'wp-element', 'wp-components', 'wp-data', 'wp-editor'), $this->version );
 
-		wp_localize_script( 'sonaar-block-script', 'sonaar_block', array(
-			'playlist_list'=> $this->sr_plugin_block_select_playlist(),
-		));
-		
 
 		if ( function_exists( 'register_block_type' ) ) {
 			
@@ -1126,11 +1121,11 @@ class Sonaar_Block {
 			),
 			'playlist_list' => array(
 				'type'    => 'array',
-				'default' => $this->sr_plugin_block_select_playlist(),
+				'default' => is_admin() ? $this->sr_plugin_block_select_playlist() : [],
 			),
 			'playlist_list_cat' => array(
 				'type'    => 'array',
-				'default' => $this->sr_plugin_block_select_category(),
+				'default' => is_admin() ? $this->sr_plugin_block_select_category() : [],
 			),
 			'show_cat_description' => array(
 				'type'    => 'boolean',
@@ -1974,7 +1969,6 @@ class Sonaar_Block {
 		} else {
 			$options[0] = esc_html__( 'Create a Category First', 'elementor-sonaar' );
 		}
-		
 		return $options;
 	}
 

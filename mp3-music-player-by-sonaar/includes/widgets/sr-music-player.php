@@ -7958,7 +7958,7 @@ class SR_Audio_Player extends Widget_Base {
 							'{{WRAPPER}} .iron-audioplayer .srp_trackartist' => 'display:none;',
 						],
 						'separator' 				=> 'before',
-						'default'					=> '',
+						'default'					=> 'false',
 					]
 				);
 				$this->add_control(
@@ -11829,6 +11829,7 @@ class SR_Audio_Player extends Widget_Base {
 			if (isset($settings['track_desc_postcontent']) && $settings['track_desc_postcontent'] == 'true'){
 				$shortcode .= 'track_desc_postcontent="true" ';
 			}
+			
 			if (isset($settings['artist_wrap']) && $settings['artist_wrap'] === 'true'){
 				$shortcode .= 'artist_wrap="true" ';
 			}

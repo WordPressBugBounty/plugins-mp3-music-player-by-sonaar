@@ -5004,6 +5004,8 @@ article div.iron-audioplayer ol li {
               display: none; }
         .iron-audioplayer .playlist .store-list .song-store-list-menu:hover .fa-ellipsis-v {
           z-index: 50; }
+      .iron-audioplayer .playlist .store-list a.song-store:focus {
+        outline: unset; }
       .iron-audioplayer .playlist .store-list .song-store {
         display: flex;
         align-items: center;
@@ -5611,7 +5613,8 @@ a.tracklist-item-title:hover {
     align-items: center;
     transition: opacity 0.3s; }
     .srp_player_boxed .srp_noteButton.srp_hide {
-      opacity: 0; }
+      opacity: 0;
+      pointer-events: none; }
   .srp_player_boxed .album-player .buttons-block {
     margin: 0px; }
     .srp_player_boxed .album-player .buttons-block .store-list li {
@@ -6100,6 +6103,10 @@ a.tracklist-item-title:hover {
   content: '\e839'; }
 
 /* '' */
+.sricon-x-twitter:before {
+  content: '\e87b'; }
+
+/* '' */
 /* '' */
 /*
  * Scrollbar rail styles

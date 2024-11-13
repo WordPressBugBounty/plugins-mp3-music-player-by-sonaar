@@ -1,11 +1,11 @@
 @font-face {
   font-family: 'sricons';
-  src: url('../font/sricons.eot?27544243');
-  src: url('../font/sricons.eot?27544243#iefix') format('embedded-opentype'),
-       url('../font/sricons.woff2?27544243') format('woff2'),
-       url('../font/sricons.woff?27544243') format('woff'),
-       url('../font/sricons.ttf?27544243') format('truetype'),
-       url('../font/sricons.svg?27544243#sricons') format('svg');
+  src: url('../font/sricons.eot?24851454');
+  src: url('../font/sricons.eot?24851454#iefix') format('embedded-opentype'),
+       url('../font/sricons.woff2?24851454') format('woff2'),
+       url('../font/sricons.woff?24851454') format('woff'),
+       url('../font/sricons.ttf?24851454') format('truetype'),
+       url('../font/sricons.svg?24851454#sricons') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -15,7 +15,7 @@
 @media screen and (-webkit-min-device-pixel-ratio:0) {
   @font-face {
     font-family: 'sricons';
-    src: url('../font/sricons.svg?27544243#sricons') format('svg');
+    src: url('../font/sricons.svg?24851454#sricons') format('svg');
   }
 }
 */
@@ -115,4 +115,5 @@
 .sricon-star_remove:before { content: '\e868'; } /* '' */
 .sricon-heart-fill:before { content: '\e869'; } /* '' */
 .sricon-heart:before { content: '\e86a'; } /* '' */
+.sricon-x-twitter:before { content: '\e87b'; } /* '' */
 .sricon-spinner:before { content: '\e97b'; } /* '' */
