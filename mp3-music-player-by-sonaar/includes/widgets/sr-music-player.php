@@ -7954,9 +7954,6 @@ class SR_Audio_Player extends Widget_Base {
 						'label_on' 					=> esc_html__( 'Hide', 'sonaar-music' ),
 						'label_off' 				=> esc_html__( 'Show', 'sonaar-music' ),
 						'return_value' 				=> 'true',
-						'selectors' => [
-							'{{WRAPPER}} .iron-audioplayer .srp_trackartist' => 'display:none;',
-						],
 						'separator' 				=> 'before',
 						'default'					=> 'false',
 					]
@@ -11829,7 +11826,9 @@ class SR_Audio_Player extends Widget_Base {
 			if (isset($settings['track_desc_postcontent']) && $settings['track_desc_postcontent'] == 'true'){
 				$shortcode .= 'track_desc_postcontent="true" ';
 			}
-			
+			if (isset($settings['artist_hide']) && $settings['artist_hide'] === 'true'){
+				$shortcode .= 'artist_hide="true" ';
+			}
 			if (isset($settings['artist_wrap']) && $settings['artist_wrap'] === 'true'){
 				$shortcode .= 'artist_wrap="true" ';
 			}

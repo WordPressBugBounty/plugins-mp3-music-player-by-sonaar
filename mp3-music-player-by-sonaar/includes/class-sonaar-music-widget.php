@@ -1494,7 +1494,7 @@ class Sonaar_Music_Widget extends WP_Widget{
                 $widgetPart_slider .= $navigationTemplate;
                 $widgetPart_slider .= '</div>';  // swiper-box-navigation
             }
-            $widgetPart_slider .= '<div class="srp_swiper swiper' . esc_attr($swiperClass) . '" ' . esc_attr($dataSwiperSource) . '  data-params="' .  esc_attr( $sliderParams ) . '" >';
+            $widgetPart_slider .= '<div class="srp_swiper swiper' . esc_attr($swiperClass) . '" ' . $dataSwiperSource . '  data-params="' .  esc_attr( $sliderParams ) . '" >';
             $widgetPart_slider .= '<div class="swiper-wrapper">';
             $slideList = $playlist['tracks'];
             if( $sliderSource == 'post' ){
@@ -1621,6 +1621,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         }
 
         $tracklistClass .= ( $hasTracklistSoundwave )? ' srp_tracklist_waveform_enabled' : '';
+        $tracklistClass .= ( isset( $this->shortcodeParams['artist_hide'] ) &&  $this->shortcodeParams['artist_hide'] === 'true' && Sonaar_Music::get_option('show_artist_name', 'srmp3_settings_general') )? ' srp_tracklist_hide_artist' : '';  
         $tracklist_datas = (isset($this->shortcodeParams['tracklist_soundwave_bar_width'])) ? ' data-wave-bar-width="' . esc_attr($this->shortcodeParams['tracklist_soundwave_bar_width']) . '"' : '';
         $tracklist_datas .= (isset($this->shortcodeParams['tracklist_soundwave_bar_gap'])) ? ' data-wave-bar-gap="' . esc_attr($this->shortcodeParams['tracklist_soundwave_bar_gap']) . '"' : '';
         $tracklist_datas .= (isset($this->shortcodeParams['tracklist_soundwave_line_cap']) ) ? ' data-wave-line-cap="' . esc_attr($this->shortcodeParams['tracklist_soundwave_line_cap']) . '"' : '';

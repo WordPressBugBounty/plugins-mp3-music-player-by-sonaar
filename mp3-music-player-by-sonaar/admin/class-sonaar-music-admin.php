@@ -468,7 +468,7 @@ class Sonaar_Music_Admin {
                 'cmb2_conditionallogic-js', 
                 plugin_dir_url( __FILE__ ) . 'library/cmb2-conditional-logic/cmb2-conditional-logic.min.js', 
                 '', 
-                '1.0.0', 
+                $this->version, 
                 true
             );  // Used for plugin settings page and CPT 'sr_advanced_triggers'
         }

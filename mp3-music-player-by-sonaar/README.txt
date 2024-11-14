@@ -5,7 +5,7 @@ Donate link: https://sonaar.io
 Requires at least: 4.7
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 5.9
+Stable tag: 5.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,10 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.9.1 =
+- Hotfix: Carousel Slider not working since last update
+- Hotfix: Artist Names not displaying in the tracklist since last update
+
 = 5.9 =
 - New: Introducing Advanced Triggers. Engage listeners with playback actions and download buttons, including previews, watermarks, ads, popups, redirects, scrolling, and role-based interactive enhancements. [Learn More](https://sonaar.io/tips-and-tricks/advanced-triggers-in-mp3-audio-player-pro/)
 - New: Add PHP filters for developers to filter track title, album title, artist name and album covers with their own custom fields
