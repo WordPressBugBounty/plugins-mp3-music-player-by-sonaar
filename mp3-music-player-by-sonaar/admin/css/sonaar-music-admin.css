@@ -1168,10 +1168,13 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
 
 .sr_playlist_page_srmp3-import-templates, .album_page_srmp3-import-templates, .sr_playlist_page_srmp3-import-shortcode-templates, .album_page_srmp3-import-shortcode-templates {
   background-color: #2c3337; }
+  .sr_playlist_page_srmp3-import-templates #wpbody-content, .album_page_srmp3-import-templates #wpbody-content, .sr_playlist_page_srmp3-import-shortcode-templates #wpbody-content, .album_page_srmp3-import-shortcode-templates #wpbody-content {
+    margin-top: 40px;
+    padding-right: 20px; }
 
 .template-list {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-direction: row;
   height: auto;
   flex-wrap: wrap;
@@ -1188,7 +1191,7 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
     color: #1d2327;
     background-color: #e0e1e3;
     position: relative;
-    width: 48.5%;
+    max-width: 600px;
     padding: 10px;
     border-radius: 5px;
     overflow: hidden;
@@ -1245,9 +1248,15 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
   background-color: #1db91d; }
 
 .srmp3_wrap_templates {
-  margin: 40px 30px;
-  width: calc(100% - 60px);
   max-width: 900px; }
+  .srmp3_wrap_templates ul {
+    list-style: disc; }
+    .srmp3_wrap_templates ul li {
+      margin-top: 10px; }
+  .srmp3_wrap_templates a {
+    color: var(--srp-admin-color); }
+    .srmp3_wrap_templates a:hover {
+      color: var(--srp-admin-color); }
 
 .srmp3_player_templates {
   display: flex;
@@ -1265,12 +1274,19 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
   vertical-align: super;
   display: inline-block; }
 
+h2.srmp3_import_subtitle {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600; }
+
 .srmp3_import_subtitle {
   color: #fff;
-  font-size: 16px; }
+  font-size: 16px;
+  margin-bottom: 12px; }
 
 .srmp3_import_messages {
-  margin-bottom: 20px; }
+  margin-bottom: 20px;
+  max-width: 900px; }
 
 .srmp3_import_license-msg {
   color: #fff;
@@ -1350,7 +1366,8 @@ body.admin-color-fresh #adminmenu #menu-posts-sr_playlist a[href="?page=go_pro"]
   display: flex;
   justify-content: space-between;
   align-items: center;
-  column-gap: 5px; }
+  column-gap: 5px;
+  max-width: 900px; }
 
 .srp_search_main .srp_search_container {
   visibility: visible !important;

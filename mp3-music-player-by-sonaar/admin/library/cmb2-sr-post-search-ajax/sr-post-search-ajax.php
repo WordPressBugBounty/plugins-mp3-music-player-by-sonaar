@@ -61,12 +61,15 @@ class SR_post_Search_Ajax {
         $select_behavior = $field->args('select_behavior'); // 'replace' or 'add'
         $multiple = $select_behavior === 'add' ? 'multiple' : '';
         $required = '';
-        if (isset($field->args['attributes']['required']) && $field->args['attributes']['required'] === 
-        'required') {
+        if (isset($field->args['attributes']['required']) && $field->args['attributes']['required'] === 'required') {
             $required = 'required';
         }
         // Retrieve the meta query, if available
         $meta_query = $field->args('meta_query') ?? [];
+        
+        // Retrieve the search type and taxonomy
+        $search_type = $field->args('search_type') ?? 'post';
+        $taxonomy = $field->args('taxonomy') ?? '';
     
         $conditional_attrs = '';
         if (isset($field->args['attributes']['data-conditional'])) {
@@ -87,6 +90,8 @@ class SR_post_Search_Ajax {
                 ' . $multiple . ' 
                 style="width:100%;" 
                 data-post-type="' . esc_attr(json_encode($post_type)) . '" 
+                data-search-type="' . esc_attr($search_type) . '" 
+                data-taxonomy="' . esc_attr($taxonomy) . '" 
                 data-select-behavior="' . esc_attr($select_behavior) . '" 
                 data-meta-query="' . esc_attr(json_encode($meta_query)) . '" 
                 ' . $conditional_attrs . ' 
@@ -96,18 +101,23 @@ class SR_post_Search_Ajax {
         if (!empty($escaped_value)) {
             if (is_array($escaped_value)) {
                 foreach ($escaped_value as $value) {
-                    $post_title = get_the_title($value);
-                    echo '<option value="' . esc_attr($value) . '" selected>' . esc_html($post_title) . '</option>';
+                    $option_label = $search_type === 'taxonomy' 
+                        ? get_term($value)->name 
+                        : get_the_title($value);
+                    echo '<option value="' . esc_attr($value) . '" selected>' . esc_html($option_label) . '</option>';
                 }
             } else {
-                $post_title = get_the_title($escaped_value);
-                echo '<option value="' . esc_attr($escaped_value) . '" selected>' . esc_html($post_title) . '</option>';
+                $option_label = $search_type === 'taxonomy' 
+                    ? get_term($escaped_value)->name 
+                    : get_the_title($escaped_value);
+                echo '<option value="' . esc_attr($escaped_value) . '" selected>' . esc_html($option_label) . '</option>';
             }
         }
     
         echo '</select>';
         $field_type->_desc(true); // Display field description if available
     }
+    
     
     
     
@@ -120,27 +130,24 @@ class SR_post_Search_Ajax {
     public function ajax_search() {
         check_ajax_referer('sr_post_search', 'nonce');
     
-        $post_types = isset($_GET['post_type']) ? (array) $_GET['post_type'] : ['post'];
-        $post_types = array_map('sanitize_text_field', $post_types);
-    
+        $search_type = isset($_GET['search_type']) ? sanitize_text_field($_GET['search_type']) : 'post';
         $search_term = isset($_GET['q']) ? sanitize_text_field($_GET['q']) : '';
-        $meta_query = isset($_GET['meta_query']) ? json_decode(stripslashes($_GET['meta_query']), true) : [];
-    
         $results = [];
     
-        // If search term is numeric, try finding by exact post ID first
-        if (is_numeric($search_term)) {
-            $id_query = new WP_Query([
+        if ($search_type === 'post') {
+            $post_types = isset($_GET['post_type']) ? (array) $_GET['post_type'] : ['post'];
+            $post_types = array_map('sanitize_text_field', $post_types);
+    
+            $query = new WP_Query([
                 'post_type'      => $post_types,
                 'posts_per_page' => 10,
-                'post__in'       => [(int) $search_term], // Directly match by post ID
-                'meta_query'     => $meta_query,
+                's'              => $search_term,
                 'post_status'    => 'publish',
             ]);
     
-            if ($id_query->have_posts()) {
-                while ($id_query->have_posts()) {
-                    $id_query->the_post();
+            if ($query->have_posts()) {
+                while ($query->have_posts()) {
+                    $query->the_post();
                     $results[] = [
                         'id'   => get_the_ID(),
                         'text' => get_the_title(),
@@ -148,33 +155,53 @@ class SR_post_Search_Ajax {
                 }
             }
             wp_reset_postdata();
-        }
-    
-        // Second query to search by title for partial matches
-        $title_query = new WP_Query([
-            'post_type'      => $post_types,
-            'posts_per_page' => 10,
-            's'              => $search_term, // Search within title/content
-            'meta_query'     => $meta_query,
-            'post_status'    => 'publish',
-        ]);
-    
-        if ($title_query->have_posts()) {
-            while ($title_query->have_posts()) {
-                $title_query->the_post();
-                // Avoid duplicates if already added by ID
-                if (!array_search(get_the_ID(), array_column($results, 'id'))) {
-                    $results[] = [
-                        'id'   => get_the_ID(),
-                        'text' => get_the_title(),
-                    ];
+        } elseif ($search_type === 'taxonomy') {
+               // Call the existing function to get terms
+                $options = srp_elementor_select_category();
+
+                // Filter results based on the search term
+                foreach ($options as $term_id => $label) {
+                    if (stripos($label, $search_term) !== false) { // Case-insensitive match
+                        $results[] = [
+                            'id'   => $term_id,
+                            'text' => $label,
+                        ];
+                    }
                 }
-            }
+            /*$sr_postypes = Sonaar_Music_Admin::get_cpt(true); // Retrieve custom post types
+    
+            foreach ($sr_postypes as $post_type) {
+                $taxonomies = get_object_taxonomies($post_type, 'names');
+    
+                // Customize taxonomy inclusion logic
+                if ($post_type === 'product' && defined('WC_VERSION')) {
+                    $taxonomies = ['product_cat', 'product_tag'];
+                }
+    
+                foreach ($taxonomies as $taxonomy) {
+                    $terms = get_terms([
+                        'taxonomy'   => $taxonomy,
+                        'search'     => $search_term,
+                        'hide_empty' => apply_filters('sonaar/hide_empty_terms', true),
+                    ]);
+    
+                    if (!empty($terms) && !is_wp_error($terms)) {
+                        foreach ($terms as $term) {
+                            $results[] = [
+                                'id'   => $term->term_id,
+                                'text' => $term->name . ' (' . $term->count . ') [' . $taxonomy . ']',
+                            ];
+                        }
+                    }
+                }
+            }*/
         }
     
-        wp_reset_postdata();
         wp_send_json($results);
     }
+    
+    
+    
     
     
     

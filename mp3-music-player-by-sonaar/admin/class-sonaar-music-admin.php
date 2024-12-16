@@ -7948,7 +7948,7 @@ class Sonaar_Music_Admin {
                     'type'    => 'multicheck',
                     'select_all_button' => false,
                     'column' => array(
-                        'position' => 2,
+                        'position' => 3,
                         'name'     => esc_html__('File Included','sonaar-music')
                     ),
                     'options' => array(
@@ -7969,7 +7969,7 @@ class Sonaar_Music_Admin {
                     'description'   => esc_html__('Enter a number or the word Unlimited', 'sonaar-music'),
                     'id'            => 'usageterms_num_dist_copies',
                     'column' => array(
-                        'position' => 3,
+                        'position' => 4,
                         'name'     => esc_html__('Distribution Copies','sonaar-music')
                     ),
                     'type'          => 'text_small',
@@ -7980,7 +7980,7 @@ class Sonaar_Music_Admin {
                     'id'            => 'usageterms_num_audio_streams',
                     'type'          => 'text_small',
                     'column' => array(
-                        'position' => 3,
+                        'position' => 5,
                         'name'     => esc_html__('Audio Streams','sonaar-music')
                     ),
                 ) );
@@ -7990,7 +7990,7 @@ class Sonaar_Music_Admin {
                     'id'            => 'usageterms_num_radio_stations',
                     'type'          => 'text_small',
                     'column' => array(
-                        'position' => 3,
+                        'position' => 6,
                         'name'     => esc_html__('Radio','sonaar-music')
                     ),
                 ) );
@@ -8000,7 +8000,7 @@ class Sonaar_Music_Admin {
                     'id'            => 'usageterms_num_free_downloads',
                     'type'          => 'text_small',
                     'column' => array(
-                        'position' => 3,
+                        'position' => 7,
                         'name'     => esc_html__('Free Downloads','sonaar-music')
                     ),
                 ) );
@@ -8010,7 +8010,7 @@ class Sonaar_Music_Admin {
                     'id'            => 'usageterms_num_music_videos',
                     'type'          => 'text_small',
                     'column' => array(
-                        'position' => 3,
+                        'position' => 8,
                         'name'     => esc_html__('Music Videos','sonaar-music')
                     ),
                 ) );
@@ -8020,7 +8020,7 @@ class Sonaar_Music_Admin {
                     'id'            => 'usageterms_num_monetized_video_streams',
                     'type'          => 'text_small',
                     'column' => array(
-                        'position' => 3,
+                        'position' => 9,
                         'name'     => esc_html__('Video Streams','sonaar-music')
                     ),
                 ) );

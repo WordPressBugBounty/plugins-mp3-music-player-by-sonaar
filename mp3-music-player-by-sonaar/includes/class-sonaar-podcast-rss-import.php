@@ -414,8 +414,8 @@ if ( ! class_exists( 'Sonaar_RSS_Import' ) && class_exists( 'WP_Importer' ) ) {
 					$episode_audio_file = $item->get_enclosure(0)->get_link();
 				}
 				
-				$episode_audio_file = esc_sql( str_replace( '?ref=feed', '', $episode_audio_file ) );
-		
+				$episode_audio_file = str_replace( '?ref=feed', '', $episode_audio_file );
+				$episode_audio_file = (strpos($episode_audio_file, 'anchor.fm') !== false)? $episode_audio_file : esc_sql( $episode_audio_file );
 
 				// ignore items that have no enclosure.
 				if ( empty( $episode_audio_file ) ) {

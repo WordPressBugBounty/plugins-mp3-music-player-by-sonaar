@@ -150,6 +150,8 @@ class Sonaar_Music_Widget extends WP_Widget{
             $category = ( isset( $this->shortcodeParams['category'] ) ) ? $this->shortcodeParams['category'] : false;
             $posts_not_in = ( function_exists( 'run_sonaar_music_pro' ) &&  isset( $this->shortcodeParams['posts_not_in'] ) ) ? $this->shortcodeParams['posts_not_in'] : null;
             $category_not_in = ( function_exists( 'run_sonaar_music_pro' ) &&  isset( $this->shortcodeParams['category_not_in'] ) ) ? $this->shortcodeParams['category_not_in'] : null;
+            $author = ( function_exists( 'run_sonaar_music_pro' ) &&  isset( $this->shortcodeParams['author'] ) ) ? $this->shortcodeParams['author'] : null;
+
             if($category){
                 $terms = $category;
                 if($category != 'all'){
@@ -209,7 +211,7 @@ class Sonaar_Music_Widget extends WP_Widget{
 
            // if (isset($terms) && $terms !=='' && $terms != false){
             if ($category){
-                $returned_data = $this->getAlbumsFromTerms($category, $posts_not_in, $category_not_in, $posts_per_pages, false); 
+                $returned_data = $this->getAlbumsFromTerms($category, $posts_not_in, $category_not_in, $author, $posts_per_pages, false); 
                 $albums = $returned_data['albums'];// true means get post objects. false means get Ids only  
             }
            
@@ -554,7 +556,7 @@ class Sonaar_Music_Widget extends WP_Widget{
             if($ajaxFirstLoad){
                 $albumParsed = '';
             }
-            $playlist = $this->get_playlist($albumParsed, $category, $posts_not_in, $category_not_in, $title, $feed_title, $feed, $feed_img, $el_widget_id, $artwork, $posts_per_pages, $all_category, $single_playlist, $this->getOptionValue('reverse_tracklist'), $audio_meta_field, $repeater_meta_field, 'widget', $track_desc_postcontent, $import_file, $rss_items, $rss_item_title, $isPlayer_Favorite, $isPlayer_recentlyPlayed);
+            $playlist = $this->get_playlist($albumParsed, $category, $posts_not_in, $category_not_in, $author, $title, $feed_title, $feed, $feed_img, $el_widget_id, $artwork, $posts_per_pages, $all_category, $single_playlist, $this->getOptionValue('reverse_tracklist'), $audio_meta_field, $repeater_meta_field, 'widget', $track_desc_postcontent, $import_file, $rss_items, $rss_item_title, $isPlayer_Favorite, $isPlayer_recentlyPlayed);
             if ( !$playlist ) return;
             
             $playlist = (is_array($playlist)) ? $playlist : json_decode($playlist, true);
@@ -1738,7 +1740,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         if ( $category ) {
           $albums = '';
         }
-        $json_file = home_url('?load=playlist.json&amp;title='.$title.'&amp;albums='.$albums.'&amp;category='.$category.'&amp;posts_not_in='.$posts_not_in.'&amp;category_not_in='.$category_not_in.'&amp;feed_title='.$feed_title.'&amp;feed='.$feed.'&amp;feed_img='.$feed_img.'&amp;el_widget_id='.$el_widget_id.'&amp;artwork='.$artwork .'&amp;posts_per_pages='.$posts_per_pages .'&amp;all_category='.$all_category .'&amp;single_playlist='.$single_playlist .'&amp;reverse_tracklist='. $this->getOptionValue('reverse_tracklist') .'&amp;audio_meta_field='.$audio_meta_field .'&amp;repeater_meta_field='.$repeater_meta_field .'&amp;import_file='.$import_file .'&amp;rss_items='.$rss_items .'&amp;rss_item_title='.$rss_item_title .'&amp;is_favorite=' . $isPlayer_Favorite .'&amp;is_recentlyplayed=' . $isPlayer_recentlyPlayed );
+        $json_file = home_url('?load=playlist.json&amp;title='.$title.'&amp;albums='.$albums.'&amp;category='.$category.'&amp;posts_not_in='.$posts_not_in.'&amp;category_not_in='.$category_not_in.'&amp;author='.$author.'&amp;feed_title='.$feed_title.'&amp;feed='.$feed.'&amp;feed_img='.$feed_img.'&amp;el_widget_id='.$el_widget_id.'&amp;artwork='.$artwork .'&amp;posts_per_pages='.$posts_per_pages .'&amp;all_category='.$all_category .'&amp;single_playlist='.$single_playlist .'&amp;reverse_tracklist='. $this->getOptionValue('reverse_tracklist') .'&amp;audio_meta_field='.$audio_meta_field .'&amp;repeater_meta_field='.$repeater_meta_field .'&amp;import_file='.$import_file .'&amp;rss_items='.$rss_items .'&amp;rss_item_title='.$rss_item_title .'&amp;is_favorite=' . $isPlayer_Favorite .'&amp;is_recentlyplayed=' . $isPlayer_recentlyPlayed );
         
         $jsonExtraParamNames = ['srp_player_id','srp_meta','srp_search','srp_page','srp_order']; //Add params from ajaxInstance in the json file
         foreach ($jsonExtraParamNames as $name) {
@@ -1973,7 +1975,7 @@ class Sonaar_Music_Widget extends WP_Widget{
     }
 
 
-    private function getAlbumsFromTerms($terms, $posts_not_in, $category_not_in, $posts_per_page, $returnPostObj = false, $player = null, $reverse_tracklist = false) {
+    private function getAlbumsFromTerms($terms, $posts_not_in, $category_not_in, $author, $posts_per_page, $returnPostObj = false, $player = null, $reverse_tracklist = false) {
         $fields = $returnPostObj ? 'all' : 'ids';
     
         $paged = 1;
@@ -2290,6 +2292,13 @@ class Sonaar_Music_Widget extends WP_Widget{
             $query_args['tax_query'][] = $tag_query;
         }
 
+        // Check if $author is present
+        if (!empty($author)) {
+            // If $author is provided, use it as the author query parameter
+            $query_args['author'] = $author;
+        }
+       
+        
         //error_log("Query Args: " . print_r($query_args, true));
         $query = new WP_Query($query_args);
         
@@ -2950,6 +2959,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         $category =  !empty($_GET["category"]) ? sanitize_text_field($_GET["category"]) : null;
         $posts_not_in =  !empty($_GET["posts_not_in"]) ? sanitize_text_field($_GET["posts_not_in"]) : null;
         $category_not_in =  !empty($_GET["category_not_in"]) ? sanitize_text_field($_GET["category_not_in"]) : null;
+        $author =  !empty($_GET["author"]) ? sanitize_text_field($_GET["author"]) : null;
         $all_category = !empty($_GET["all_category"]) ? true : null;
         $reverse_tracklist = !empty($_GET["reverse_tracklist"]) ? true : false;
         $audio_meta_field = !empty($_GET["audio_meta_field"]) ? $_GET["audio_meta_field"] : null;
@@ -2961,7 +2971,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         $isPlayer_Favorite = !empty($_GET["is_favorite"]) ? sanitize_text_field($_GET["is_favorite"]) : null;
         $isPlayer_recentlyPlayed = !empty($_GET["is_recentlyplayed"]) ? sanitize_text_field($_GET["is_recentlyplayed"]) : null;
         $this->shortcodeParams = null;
-        $playlist = $this->get_playlist($albums, $category, $posts_not_in, $category_not_in, $title, $feed_title, $feed, $feed_img, $el_widget_id, $artwork, $posts_per_pages, $all_category, $single_playlist, $reverse_tracklist, $audio_meta_field, $repeater_meta_field, 'sticky', $track_desc_postcontent, $import_file, $rss_items, $rss_item_title, $isPlayer_Favorite, $isPlayer_recentlyPlayed);
+        $playlist = $this->get_playlist($albums, $category, $posts_not_in, $category_not_in, $author, $title, $feed_title, $feed, $feed_img, $el_widget_id, $artwork, $posts_per_pages, $all_category, $single_playlist, $reverse_tracklist, $audio_meta_field, $repeater_meta_field, 'sticky', $track_desc_postcontent, $import_file, $rss_items, $rss_item_title, $isPlayer_Favorite, $isPlayer_recentlyPlayed);
         if(!is_array($playlist) || empty($playlist['tracks']))
         wp_send_json('');
        
@@ -3627,7 +3637,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         }
         return false;
     }
-    private function get_playlist($album_ids = array(), $category = null, $posts_not_in = null, $category_not_in = null, $title = null, $feed_title = null, $feed = null, $feed_img = null, $el_widget_id = null, $artwork = null, $posts_per_pages = null, $all_category = null, $single_playlist = false, $reverse_tracklist = false, $audio_meta_field = null, $repeater_meta_field = null, $player = 'widget', $track_desc_postcontent  = null, $import_file = null, $rss_items = -1, $rss_item_title = null, $isPlayer_Favorite = null, $isPlayer_recentlyPlayed = null) {
+    private function get_playlist($album_ids = array(), $category = null, $posts_not_in = null, $category_not_in = null, $author = null, $title = null, $feed_title = null, $feed = null, $feed_img = null, $el_widget_id = null, $artwork = null, $posts_per_pages = null, $all_category = null, $single_playlist = false, $reverse_tracklist = false, $audio_meta_field = null, $repeater_meta_field = null, $player = 'widget', $track_desc_postcontent  = null, $import_file = null, $rss_items = -1, $rss_item_title = null, $isPlayer_Favorite = null, $isPlayer_recentlyPlayed = null) {
         // Capture the start time
         // $start_time = microtime(true);
         global $post;
@@ -3639,7 +3649,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         $feed_desc = false;
         $feed_id = false;
         // Collect all the parameters into an associative array for easier handling with third party
-        $params = compact('album_ids', 'category', 'posts_not_in', 'category_not_in', 'title', 'feed_title', 'feed', 'feed_img', 'feed_desc', 'feed_id', 'el_widget_id', 'artwork', 'posts_per_pages', 'all_category', 'single_playlist', 'reverse_tracklist', 'audio_meta_field', 'repeater_meta_field', 'player', 'track_desc_postcontent', 'import_file', 'rss_items', 'rss_item_title', 'isPlayer_Favorite', 'isPlayer_recentlyPlayed');
+        $params = compact('album_ids', 'category', 'posts_not_in', 'category_not_in', 'author', 'title', 'feed_title', 'feed', 'feed_img', 'feed_desc', 'feed_id', 'el_widget_id', 'artwork', 'posts_per_pages', 'all_category', 'single_playlist', 'reverse_tracklist', 'audio_meta_field', 'repeater_meta_field', 'player', 'track_desc_postcontent', 'import_file', 'rss_items', 'rss_item_title', 'isPlayer_Favorite', 'isPlayer_recentlyPlayed');
         do_action_ref_array('srmp3_pre_get_playlist', array(&$params));
         extract($params);
 
@@ -3802,7 +3812,7 @@ class Sonaar_Music_Widget extends WP_Widget{
             $albums = get_posts($args);
         }else{
             // retrieve albums from category
-            $returned_data = $this->getAlbumsFromTerms($category, $posts_not_in, $category_not_in, $posts_per_pages, true, $player, $reverse_tracklist); 
+            $returned_data = $this->getAlbumsFromTerms($category, $posts_not_in, $category_not_in, $author, $posts_per_pages, true, $player, $reverse_tracklist); 
             $albums = $returned_data['albums'];// true means get post objects. false means get Ids only
     
         }
@@ -4609,50 +4619,64 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
             $error .="</p>";
             echo $error;
         }
-        if ($fileType == 'csv'){
+        
+        if ($fileType == 'csv') {
             // Process the CSV file data
-            $csv_rows = str_getcsv($json_file, "\n");
-            $header_row = str_getcsv(array_shift($csv_rows));
+            $csv_rows = str_getcsv($json_file, "\n"); // Split into rows
+        
+            // Detect delimiter from the first row
+            $header_row = $csv_rows[0];
+            $delimiter = (strpos($header_row, ";") !== false) ? ";" : ",";
+        
+            $header_row = str_getcsv(array_shift($csv_rows), $delimiter); // Parse header with detected delimiter
+        
             $playlists = [];
-            $track_pos = 0; 
-            $playlist_image = false; 
+            $track_pos = 0;
+            $playlist_image = false;
             $playlist_name = false;
             $combined_playlist_tracks = [];
+        
             foreach ($csv_rows as $csv_row) {
-                $row_data = str_getcsv($csv_row);
-                $expected_columns = count($header_row);
-                $actual_columns = count($row_data);
-
+                $row_data = str_getcsv($csv_row, $delimiter); // Parse rows with detected delimiter
+        
+                // Ensure the row matches the header column count
+                /*if (count($header_row) > count($row_data)) {
+                    $row_data = array_pad($row_data, count($header_row), '');
+                } elseif (count($header_row) < count($row_data)) {
+                    $row_data = array_slice($row_data, 0, count($header_row));
+                }*/
+        
                 if (count($header_row) != count($row_data)) {
-                    //prevent fatal error with the array_combine and show notice to admin.
-                    if (current_user_can('manage_options')){
+                    if (current_user_can('manage_options')) {
                         echo "<p style='color:red;'>Notice to admin: Mismatch in row: $csv_row\n<br>";
-                        $missing_columns = array_diff_key($header_row, $row_data);
-                        echo "Missing columns: " . implode(", ", $missing_columns) . "\n<br></p>";
+                        echo "Expected columns: " . count($header_row) . ", Actual columns: " . count($row_data) . "\n<br></p>";
                     }
                     continue;
                 }
+        
                 $data_row = array_combine($header_row, $row_data);
-                $song_store_list = array();
+        
+                $song_store_list = [];
                 foreach ($data_row as $key => $value) {
                     if (strpos($key, 'cta_title_') === 0) {
                         $num = substr($key, -1);
                         if ($value != '') {
-                            $song_store_list[] = array(
+                            $song_store_list[] = [
                                 'store-icon' => $data_row['cta_icon_' . $num],
                                 'store-name' => $value,
-                                'store-link' => (isset($data_row['cta_link_' . $num])) ? $data_row['cta_link_' . $num]: '',
+                                'store-link' => (isset($data_row['cta_link_' . $num])) ? $data_row['cta_link_' . $num] : '',
                                 'store-target' => (isset($data_row['cta_target_' . $num])) ? $data_row['cta_target_' . $num] : '_blank',
-                                'link-option' => (isset($data_row['cta_is_popup_' . $num]) && $data_row['cta_is_popup_' . $num] !== '' ) ? 'popup' : '',
+                                'link-option' => (isset($data_row['cta_is_popup_' . $num]) && $data_row['cta_is_popup_' . $num] !== '') ? 'popup' : '',
                                 'store-content' => (isset($data_row['cta_popup_content_' . $num])) ? $data_row['cta_popup_content_' . $num] : '',
-                            );
+                            ];
                         }
                     }
                 }
+        
                 $audioSrc = isset($data_row['track_url']) ? $data_row['track_url'] : '';
                 $track_title = isset($data_row['track_title']) ? $data_row['track_title'] : '';
                 $track_title = apply_filters('srmp3_track_title', $track_title, null, $audioSrc);
-
+        
                 $track = [
                     'id' => '',
                     'playlist_name' => isset($data_row['playlist_name']) ? $data_row['playlist_name'] : '',
@@ -4665,7 +4689,7 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
                     'length' => isset($data_row['track_length']) ? $data_row['track_length'] : '',
                     'album_title' => isset($data_row['album_title']) ? $data_row['album_title'] : '',
                     'poster' => isset($data_row['track_image']) ? $data_row['track_image'] : '',
-                    'track_pos' => (isset($a) && get_post_meta( $a->ID, 'reverse_post_tracklist', true) )? count($csv_rows) - ($track_pos + 1) : $track_pos++,
+                    'track_pos' => (isset($a) && get_post_meta($a->ID, 'reverse_post_tracklist', true)) ? count($csv_rows) - ($track_pos + 1) : $track_pos++,
                     'release_date' => isset($data_row['album_subtitle']) ? $data_row['album_subtitle'] : '',
                     'song_store_list' => isset($song_store_list) ? $song_store_list : '',
                     'album_store_list' => ($wc_add_to_cart == 'true' || $wc_buynow_bt == 'true') ? $this->push_woocart_in_storelist($a, $is_variable_product, $wc_add_to_cart, $wc_buynow_bt) : false,
@@ -4694,10 +4718,10 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
                     $track["peakFile"] = $peakFileUrl;
                 }
 
-              
+        
                 $playlist_name = isset($data_row['playlist_name']) ? $data_row['playlist_name'] : '';
                 $playlist_image = isset($data_row['playlist_image']) ? $data_row['playlist_image'] : '';
-
+        
                 if (!isset($playlists[$playlist_name])) {
                     $playlists[$playlist_name] = [
                         'playlist_name' => $playlist_name,
@@ -4705,17 +4729,17 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
                         'tracks' => []
                     ];
                 }
-
+        
                 // Add track to the corresponding playlist only if the playlist_name matches
                 if ($track['playlist_name'] === $playlist_name) {
                     $playlists[$playlist_name]['tracks'][] = $track;
                 }
-                
+        
                 // Add track to the combined playlist
                 $combined_playlist_tracks[] = $track;
             }
-
-            if($combinedtracks){
+        
+            if ($combinedtracks) {
                 $combined_playlist_name = "Combined Tracks";
                 $combined_playlist_image = ""; // Set a default image if you like
                 // Add the combined playlist to the $playlists array
@@ -4725,12 +4749,10 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
                     'tracks' => $combined_playlist_tracks
                 ];
                 return $playlists['Combined Tracks'];
-                
             }
-
+        
             return array_values($playlists);
-
-          }else if($fileType == 'json'){
+        }else if($fileType == 'json'){
             // Process the JSON file data // NOT USED AT THE MOMENT
             $playlist = json_decode($json_file, true, 512, JSON_THROW_ON_ERROR);
             $json_tracks = $playlist['tracks'];
@@ -4746,7 +4768,7 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
             }
             $tracks = array_merge($tracks, $json_tracks);
             return $tracks;
-          }else{
+        }else{
             // Process the RSS feed data
             $feed = simplexml_load_string($json_file);
             if (!$feed){
@@ -4834,7 +4856,7 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
             
             return $playlist;
 
-          }
+        }
 
       } catch (JsonException $e) {
           if ( current_user_can( 'manage_options' ) ) {

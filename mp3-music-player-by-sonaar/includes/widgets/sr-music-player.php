@@ -8,7 +8,6 @@ use Elementor\Controls_Media;
 use Elementor\Group_Control_Base;
 use Elementor\Group_Control_Background;
 use Elementor\Group_Control_Typography;
-use Elementor\Core\Schemes\Typography;
 
 use Sonaar_Music_Admin;
 use Sonaar_Music;
@@ -1402,6 +1401,56 @@ class SR_Audio_Player extends Widget_Base {
 						]
 					]
 			);
+			
+			$this->add_control(
+				'query_by_author',
+					[
+						'label'                 		=> esc_html__( 'Include by Author(s)', 'sonaar-music' ),
+						'label_block'					=> true,
+						'type' 							=> \Elementor\Controls_Manager::SELECT2,
+						'multiple' 						=> true,
+						'options'               		=> srp_elementor_select_authors(),   
+						'dynamic' => array(
+							'active' => true,
+						),
+						'conditions'                    => [
+							'relation' => 'and',
+							'terms' => [
+								[
+									'name' => 'playlist_source', 
+									'operator' => '==',
+									'value' => 'from_cat'
+								],
+								[
+									'name' => 'query_by_author_current', 
+									'operator' => '!=',
+									'value' => 'true'
+								],
+							]
+						]
+					]
+			);
+			$this->add_control(
+				'query_by_author_current',
+				[
+					'label' 							=> esc_html__( 'Include Current Author only', 'sonaar-music' ),
+					'type' 								=> \Elementor\Controls_Manager::SWITCHER,
+					'label_on' 							=> esc_html__( 'Yes', 'sonaar-music' ),
+					'label_off' 						=> esc_html__( 'No', 'sonaar-music' ),
+					'return_value' 						=> 'true',
+					'default' 							=> '',
+					'conditions'                    => [
+						'relation' => 'and',
+						'terms' => [
+							[
+								'name' => 'playlist_source', 
+								'operator' => '==',
+								'value' => 'from_cat'
+							],
+						]
+					]
+				]
+			);
 			$this->add_control(
 				'reverse_tracklist',
 				[
@@ -2526,7 +2575,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'slider_album_title_typography',
 					'label' => sprintf( esc_html__( '%1$s Title Typography', 'sonaar-music' ), ucfirst(Sonaar_Music_Admin::sr_GetString('playlist/podcast')) ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+								'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'conditions'                    => [
 						'relation' => 'and',
 						'terms' => [
@@ -2590,7 +2641,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'slider_track_title_typography',
 					'label' => sprintf( esc_html__( '%1$s Title Typography', 'sonaar-music' ), ucfirst(Sonaar_Music_Admin::sr_GetString('track')) ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'conditions'                    => [
 						'relation' => 'and',
 						'terms' => [
@@ -2654,7 +2707,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'slider_artist_typography',
 					'label' 						=> 	esc_html__( 'Artist Name Typography', 'sonaar-music' ), 
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'conditions'                    => [
 						'relation' => 'and',
 						'terms' => [
@@ -4120,7 +4175,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'playlist_title_soundwave_typography',
 					'label' 						=> esc_html__('Heading Typography', 'sonaar-music'),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'condition'                    => [
 						'miniplayer_meta_hide!' => 'yes',
 					],
@@ -4417,7 +4474,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'metadata_typography',
 					'label' 						=> esc_html__( 'Extra Metas Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .sr_it-playlist-publish-date, {{WRAPPER}} .srp_playlist_duration, {{WRAPPER}} .srp_trackCount',
 				]
 			);	
@@ -4505,7 +4564,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'player_subtitle_typography',
 					'label' 						=> esc_html__( 'Post Subtitle Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'condition' 					=> [
 						'player_subtitle_btshow' 			=> '',
 						'player_layout' 	=> 'skin_boxed_tracklist',
@@ -4585,7 +4646,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'cat_description_typo',
 					'label' 						=> esc_html__( 'Description/About Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'separator'						=> 'before',
 					'condition' 					=> [
 						'show_cat_description' 	=> '1',
@@ -5244,7 +5307,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'duration_soundwave_typography',
 					'label' 						=> esc_html__( 'Time Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'conditions'                    => [
 						'relation' => 'and',
 						'terms' => [
@@ -5656,7 +5721,9 @@ class SR_Audio_Player extends Widget_Base {
 			[
 				'name' 							=> 'play_label_typography',
 				'label' 						=> esc_html__( 'Play Label Typography', 'sonaar-music' ),
-				'scheme' 						=> Typography::TYPOGRAPHY_1,
+				'global' => [
+					'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 				'conditions'                    => [
 					'relation' => 'or',
 					'terms' => [
@@ -7505,7 +7572,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'title_typography',
 					'label' 						=> esc_html__( 'Title Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'condition' 					=> [
 						'title_btshow' 				=> '',
 						'player_layout' 	=> 'skin_float_tracklist'
@@ -7612,7 +7681,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'subtitle_typography',
 					'label' 						=> esc_html__( 'Subtitle Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'condition' 					=> [
 						'subtitle_btshow' 			=> '',
 						'player_layout' 	=> 'skin_float_tracklist',
@@ -7649,7 +7720,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'track_title_typography',
 					'label' 						=> sprintf( esc_html__( '%1$s Title Typography', 'sonaar-music' ), ucfirst(Sonaar_Music_Admin::sr_GetString('track')) ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .iron-audioplayer .playlist .audio-track, {{WRAPPER}} .iron-audioplayer .playlist .track-number, {{WRAPPER}} .iron-audioplayer .playlist',
 				]
 			);
@@ -7977,7 +8050,9 @@ class SR_Audio_Player extends Widget_Base {
 					[
 						'name' 							=> 'artist_typography',
 						'label' 						=> esc_html__( 'Artist Name Typography', 'sonaar-music' ),
-						'scheme' 						=> Typography::TYPOGRAPHY_1,
+						'global' => [
+							'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+						],
 						'selector' 						=> '{{WRAPPER}} .iron-audioplayer .srp_trackartist',
 						'condition' 			=> [
 							'artist_hide!' => 'true',
@@ -8345,7 +8420,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'duration_typography',
 					'label' 						=> esc_html__( 'Duration Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'condition' 					=> [
 						'hide_time_duration' 		=> '',
 					],
@@ -8388,7 +8465,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'date_typography',
 					'label' 						=> esc_html__( 'Publish Date Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .iron-audioplayer .srp_tracklist-item-date',
 					'condition' 					=> [
 						'playlist_show_playlist!' 	=> '',
@@ -8443,7 +8522,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'track_desc_typography',
 					'label' 						=> esc_html__( 'Description Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} div.srp_track_description',
 					'condition' => [
 						'hide_trackdesc!' => '1',
@@ -8511,7 +8592,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'info_title_typography',
 					'label' 						=> esc_html__( 'Info Title Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .playlist .srp_note_title',
 					'condition' 					=> [
 						'hide_info_icon!' => 'yes',
@@ -8523,7 +8606,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'info_text_typography',
 					'label' 						=> esc_html__( 'Info Text Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .playlist .srp_note',
 					'condition' 					=> [
 						'hide_info_icon!' => 'yes',
@@ -9085,7 +9170,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'searchbar_typo',
 					'label' 						=> esc_html__( 'Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .srp_search_container .srp_search',
 					'separator' 					=> 'after',
 					'condition' 					=> [
@@ -9445,7 +9532,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'searchbar_cf_typo',
 					'label' 						=> esc_html__( 'Column Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .sr-playlist-cf-container',
 				]
 			);
@@ -9505,7 +9594,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'searchbar_cf_heading_typo',
 					'label' 						=> esc_html__( 'Heading Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} .iron-audioplayer.srp_has_customfields .sr-cf-heading .sr-playlist-heading-child',
 					'separator' 					=> 'after',
 					'condition' 					=> [
@@ -10239,7 +10330,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'tracklist_label_typography',
 					'label' 						=> esc_html__( 'Button Label Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'conditions' 					=> [
 					    'relation' => 'and',
 					    'terms' => [
@@ -10937,7 +11030,9 @@ class SR_Audio_Player extends Widget_Base {
 					[
 						'name' 							=> 'fav_no_track_found',
 						'label' 						=> esc_html__( 'No Track Found Typography', 'sonaar-music' ),
-						'scheme' 						=> Typography::TYPOGRAPHY_1,
+						'global' => [
+							'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+						],
 						'selector' 						=> '{{WRAPPER}} .srp-fav-notfound',
 					]
 				);
@@ -10958,7 +11053,9 @@ class SR_Audio_Player extends Widget_Base {
 					[
 						'name' 							=> 'fav_clearall_typo',
 						'label' 						=> esc_html__( 'Remove All Button Typography', 'sonaar-music' ),
-						'scheme' 						=> Typography::TYPOGRAPHY_1,
+						'global' => [
+							'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+						],
 						'selector' 						=> '{{WRAPPER}} .srp-fav-removeall-bt',
 					]
 				);
@@ -11215,7 +11312,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'store_title_typography',
 					'label' 						=> esc_html__( 'Heading Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'condition' 					=> [
 						'store_title_btshow' 		=> '',
 					],
@@ -11304,7 +11403,9 @@ class SR_Audio_Player extends Widget_Base {
 				[
 					'name' 							=> 'store_button_typography',
 					'label'						 	=> esc_html__( 'Button Typography', 'sonaar-music' ),
-					'scheme' 						=> Typography::TYPOGRAPHY_1,
+					'global' => [
+						'default' => \Elementor\Core\Kits\Documents\Tabs\Global_Typography::TYPOGRAPHY_PRIMARY,
+					],
 					'selector' 						=> '{{WRAPPER}} a.button',
 				]
 			);
@@ -11822,6 +11923,13 @@ class SR_Audio_Player extends Widget_Base {
 			}
 			if (isset($settings['category_not_in']) && $settings['category_not_in'] != '' && is_array($settings['category_not_in'])){
 				$shortcode .= 'category_not_in="' . implode(", ", $settings['category_not_in']) . '" ';
+			}
+			if (isset($settings['query_by_author']) && $settings['query_by_author'] != '' && is_array($settings['query_by_author'])){
+				$shortcode .= 'author="' . implode(", ", $settings['query_by_author']) . '" ';
+			}
+			if (isset($settings['query_by_author_current']) && $settings['query_by_author_current'] === 'true'){
+				$current_author = get_query_var('author');
+			    $shortcode .= 'author="' . $current_author . '" ';
 			}
 			if (isset($settings['track_desc_postcontent']) && $settings['track_desc_postcontent'] == 'true'){
 				$shortcode .= 'track_desc_postcontent="true" ';

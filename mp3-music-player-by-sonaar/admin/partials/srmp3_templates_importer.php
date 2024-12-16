@@ -92,12 +92,27 @@ function srmp3_get_json_url() {
   ?>
   <div class="srmp3_wrap_templates">
     <h1 class="srmp3_import_head">Import Player Templates<div class="srmp3_pro_badge"><i class="sricon-Sonaar-symbol">&nbsp;</i>Pro feature</div></h1>
-    <div class="srmp3_import_subtitle">Save time and effort with our pre-designed MP3 Audio Player Pro skin templates for Elementor. To get access, you need either the Player Elementor Templates access, the Unlimited or the Lifetime Plan or <a href="https://sonaar.io/mp3-audio-player-pro/pricing/?utm_source=Sonaar+Music+Free+Plugin&utm_medium=plugin" target="_blank">MP3 Audio Player Pro</a>. Imported templates will be available in your Templates section and will be editable with Elementor.</div>  
-    <?php if (function_exists('printPurchasedPlan')) { ?>
-      <div class="srmp3_import_license-msg">You are currently on the <span class="srmp3_import_license-msg--plan"><?php echo esc_html(printPurchasedPlan()) ?> plan. </span><?php echo wp_kses_post(printImportCTA('heading')) ?></div>
-    <?php } else { ?>
-      <div class="srmp3_import_license-msg">You are currently on the <span class="srmp3_import_license-msg--plan">free version. </span><?php echo wp_kses_post(printImportCTA('heading')) ?></div>
-    <?php }
+    <h2 class="srmp3_import_subtitle">
+      Save time with our pre-designed Player Templates for Elementor!
+    </h2>
+    <div class="srmp3_import_subtitle">
+      To access them, you need one of the following:
+      <ul>
+        <li>MP3 Audio Player Pro [Starter Plan] + Player Templates Access or</li>
+        <li>MP3 Audio Player Pro [Unlimited Plan] or</li>
+        <li>MP3 Audio Player Pro [Lifetime Plan]</li>
+      </ul>
+      <a href="https://sonaar.io/mp3-audio-player-pro/pricing/?utm_source=Sonaar+Music+Free+Plugin&utm_medium=plugin" target="_blank">View Plan Features Comparison Here</a>
+    </div>
+    <div class="srmp3_import_subtitle">
+      Once imported, templates will appear in your Templates section and can be edited with Elementor.
+    </div>
+  </div>
+  <?php if (function_exists('printPurchasedPlan')) { ?>
+    <div class="srmp3_import_license-msg">You are currently on the <span class="srmp3_import_license-msg--plan"><?php echo esc_html(printPurchasedPlan()) ?> plan. </span><?php echo wp_kses_post(printImportCTA('heading')) ?></div>
+  <?php } else { ?>
+    <div class="srmp3_import_license-msg">You are currently on the <span class="srmp3_import_license-msg--plan">free version. </span><?php echo wp_kses_post(printImportCTA('heading')) ?></div>
+  <?php }
 
   $licence = get_site_option('sonaar_music_licence');
   $transient_key = 'SRMP3_elementor_templates_json_url';

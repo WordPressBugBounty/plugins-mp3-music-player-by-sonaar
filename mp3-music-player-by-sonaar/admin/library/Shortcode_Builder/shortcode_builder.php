@@ -93,6 +93,9 @@ class SRMP3_ShortcodeBuilder {
         }
     }
     public function delete_shortcodebuilder_template(){
+        if (!current_user_can('manage_options')) {
+            wp_die('Access Denied');
+        }
         check_ajax_referer('sonaar_music_admin_ajax_nonce', 'nonce');
 
         if (isset($_POST['template_name']) && !empty($_POST['template_name'])) {
@@ -1102,7 +1105,11 @@ class SRMP3_ShortcodeBuilder {
             if ( function_exists('sonaar_player') ) {
                 add_action('admin_footer','sonaar_player', 12); //this make the sticky player works with IRON.sonaar.player.setPlayerAndPlay({ id:"3240", trackid:"0"});
             }
+        }else{
+            //return if we are not in the page builder.
+            return;
         }
+      
 
         /**
         *  TEMPLATES

@@ -5,7 +5,7 @@ Donate link: https://sonaar.io
 Requires at least: 4.7
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 5.9.1
+Stable tag: 5.9.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,25 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.9.3 =
+- Fix: Compatiblity issue with Elementor 3.26. Elementor new update caused the plugin not loading/crash on Elementor pages. https://github.com/elementor/elementor/issues/29425
+- New: Fetch playlist based on authors names https://drops.sonaar.io/i/8F4UB1
+- New: Added 'srmp3_disable_wc_player' filter hook to disable player on the WC product thumbnails
+- Fix: Anchor RSS feed importation issue
+- Fix: CSV Import issue when CSV uses commas as delimiter
+- Fix: Mobile issue with the Download & Buy buttons in some case
+- Fix: Improved admin UI to make sure the user can click only 1 time on Activate my License
+- Fix: Admin column order for Music Licenses CPT
+- Fix: Broken Access Control vulnerability
+- Tweak: Allow to list tracks based on tags, not only on categories
+- Tweak: Advanced Triggers - Audio was muted when using advanced rules in some case
+- Tweak: Track Memory. Add a status "completed" in the json storage when the track has been completed
+- Tweak: Improved UI of the Import Template Admin Area
+- Tweak: Optimized the speed of the backend
+
+= 5.9.2 =
+- Skipped version to match free/pro version numbers.
+
 = 5.9.1 =
 - Hotfix: Carousel Slider not working since last update
 - Hotfix: Artist Names not displaying in the tracklist since last update

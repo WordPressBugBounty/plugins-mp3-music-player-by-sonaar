@@ -39,7 +39,7 @@
 
         // If it's a WooCommerce product, only use the product_cat taxonomy
         if ($post_type == 'product' && defined('WC_VERSION')) {
-            $taxonomies = array('product_cat');
+            $taxonomies = array('product_cat', 'product_tag');
         }
 
         // Check if SR_PLAYLIST_CPT is defined, otherwise set 'sr_playlist'
@@ -47,6 +47,7 @@
         // If it's an SR Playlist, only use the playlist-category taxonomy
         if ($post_type == $defaultPostType) {
             $taxonomies[] = 'playlist-category';
+            $taxonomies[] = 'playlist-tag';
 
             if (Sonaar_Music::get_option('player_type', 'srmp3_settings_general') == 'podcast') {
                 $taxonomies[] = 'podcast-show';
@@ -75,6 +76,27 @@
     return $options;
 }
 
+
+function srp_elementor_select_authors() {
+    // Retrieve all users with roles including Dokan vendors
+    $args = array(
+        'role__in' => array('Author', 'Administrator', 'Editor', 'Shop Manager', 'Seller'), // Include 'Seller' for Dokan vendors
+        'orderby' => 'display_name',
+        'order' => 'ASC',
+    );
+
+    $authors = get_users($args);
+
+    // Initialize the options array
+    $options = array();
+
+    // Loop through each user and format their display
+    foreach ($authors as $author) {
+        $options[$author->ID] = $author->display_name;
+    }
+
+    return $options;
+}
 
 
 

@@ -7,10 +7,13 @@
         $('.sr-post-search-ajax').each(function () {
             var postType = $(this).data('post-type');
             var metaQuery = $(this).data('meta-query'); // Get the meta query from the field
+            var taxonomy = $(this).data('taxonomy'); // Get the taxonomy if provided
+            var searchType = $(this).data('search-type') || 'post'; // Default to 'post'
             var isMultiple = $(this).data('select-behavior') === 'add';
-
+        
             var selectElement = $(this);
-
+            console.log("yo", );
+        
             selectElement.select2({
                 multiple: isMultiple, // Enable multiple if 'add'
                 ajax: {
@@ -21,6 +24,8 @@
                         return {
                             q: params.term,
                             post_type: postType,
+                            taxonomy: taxonomy, // Include taxonomy for taxonomy searches
+                            search_type: searchType, // Specify the type of search
                             meta_query: JSON.stringify(metaQuery), // Pass meta_query as JSON
                             nonce: SR_Select2_Ajax.nonce,
                             action: 'sr_post_search',
@@ -30,8 +35,8 @@
                         return {
                             results: data.map(function (item) {
                                 return {
-                                    id: item.id, // Use post ID as value
-                                    text: item.text, // Use post title as text
+                                    id: item.id, // Use post ID or term ID as value
+                                    text: item.text, // Use post title or taxonomy term as text
                                 };
                             }),
                         };
@@ -39,21 +44,21 @@
                     cache: true,
                 },
                 allowClear: true, // Enable the clear button
-                //placeholder: 'Enter 1 or more characters...', // Optional placeholder
                 minimumInputLength: 1,
                 language: {
                     inputTooShort: function () {
                         return 'Enter 1 or more characters...'; // Text to display as a "placeholder" in the search box
                     },
-                }
+                },
             });
-
+        
             // Handle clear event to prevent errors
             selectElement.on('select2:clear', function () {
                 // Explicitly set the value to null to avoid undefined errors
                 $(this).val(null).trigger('change');
             });
         });
+        
 
        // Set or remove required attribute based on visibility, only if initially set by PHP
        $('.cmb-row').each(function () {
