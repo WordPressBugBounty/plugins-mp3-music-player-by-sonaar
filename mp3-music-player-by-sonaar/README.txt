@@ -5,7 +5,7 @@ Donate link: https://sonaar.io
 Requires at least: 4.7
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 5.9.3
+Stable tag: 5.9.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,14 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.9.4 =
+- Fix: Caroussel Slider with Favorites 
+- Fix: PHP warning in the classic Widget interface in some case
+- Fix: Special characters issue with post title when using ACF as source
+- Fix: Sticky player float layout progress bar visibility
+- Fix: Three dots clicking issue on the CTAs
+- Fix: Resolved a security vulnerability
+
 = 5.9.3 =
 - Fix: Compatiblity issue with Elementor 3.26. Elementor new update caused the plugin not loading/crash on Elementor pages. https://github.com/elementor/elementor/issues/29425
 - New: Fetch playlist based on authors names https://drops.sonaar.io/i/8F4UB1

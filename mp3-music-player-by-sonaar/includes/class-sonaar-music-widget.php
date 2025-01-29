@@ -1508,6 +1508,9 @@ class Sonaar_Music_Widget extends WP_Widget{
             }
 
             $index = 0;
+            $trackIndexRelatedToItsPost = 0; //variable required to set the data-store-id. Data-store-id is used to popup the right content.
+            $currentTrackId = ''; //Used to set the $trackIndexRelatedToItsPost
+
             foreach ( $slideList as $trackIndex => $slide ) {
                 if( $sliderSource == 'track' ){
                     $slidePostId = $slide['sourcePostID'];
@@ -1537,7 +1540,24 @@ class Sonaar_Music_Widget extends WP_Widget{
                 }else{
                     $widgetPart_slider_content .= $widgetPart_slider_album_title . $widgetPart_slider_track_title;
                 }
-                $song_store_list_ar = $this->fetch_song_store_list_html($playlist['tracks'][$trackIndex], $trackIndex,  $show_track_market, $trackIndex);
+
+                if($currentTrackId != $slidePostId){ //Reset $trackIndexRelatedToItsPost counting. It is incremented at the end of the foreach.
+                    $currentTrackId = $slidePostId;
+                    $trackIndexRelatedToItsPost = 0; 
+                }
+
+
+                if( 
+                    ( get_post_meta( $currentTrackId, 'reverse_post_tracklist', true) || $this->getOptionValue('reverse_tracklist') ) &&  // If Reverse tracklist is set through the shortcode or throught the post settings, reverse the popup CTA odrer 
+                    !(get_post_meta( $currentTrackId, 'reverse_post_tracklist', true) && $this->getOptionValue('reverse_tracklist') )  //But if Reverse tracklist is set twice, dont reverse the popup CTA odrer
+                ){
+                    $countTrackFromSamePlaylist = array_count_values( array_column($playlist['tracks'], 'sourcePostID') )[$currentTrackId];
+                    $trackIndex =  $countTrackFromSamePlaylist - 1 - $trackIndexRelatedToItsPost;
+                }else{
+                    $trackIndex =  $trackIndexRelatedToItsPost;
+                }
+
+                $song_store_list_ar = $this->fetch_song_store_list_html($playlist['tracks'][$index], $trackIndex,  $show_track_market, $index);
                 $song_store_list = $song_store_list_ar['store_list'];
                 $playlist_has_ctas = (isset($playlist_has_ctas) && $playlist_has_ctas == true ) ? $playlist_has_ctas : $song_store_list_ar['playlist_has_ctas'];
 
@@ -1547,13 +1567,13 @@ class Sonaar_Music_Widget extends WP_Widget{
                     $widgetPart_slider .= $widgetPart_slider_content;
                 }
                
-
                 $widgetPart_slider .= '</div>';
                 if( isset($this->shortcodeParams['slider_move_content_below_image']) && $this->shortcodeParams['slider_move_content_below_image'] == 'true' ){
                     $widgetPart_slider .= $widgetPart_slider_content;
                 }
                 $widgetPart_slider .= '</div>';
                 $index++;
+                $trackIndexRelatedToItsPost++;//$trackIndexRelatedToItsPost is required to set the data-store-id. Data-store-id is used to popup the right content.
             }
             $widgetPart_slider .= '</div>';
             if( $sliderNavigation && ! $ifNavigationOutside ){
@@ -2806,8 +2826,8 @@ class Sonaar_Music_Widget extends WP_Widget{
             
             $title = esc_attr( $shortcodeParams['title'] );
             $albums = $shortcodeParams['albums'];
-            $show_playlist = (bool)$shortcodeParams['show_playlist'];
-            $sticky_player = (bool)$shortcodeParamss['sticky_player'];
+            $show_playlist = ( isset($shortcodeParams['show_playlist']) )? (bool)$shortcodeParams['show_playlist']: false;
+            $sticky_player = (bool)$shortcodeParams['sticky_player'];
             $hide_artwork = (bool)$shortcodeParams['hide_artwork'];
             $show_album_market = (bool)$shortcodeParams['show_album_market'];
             $show_track_market = (bool)$shortcodeParams['show_track_market'];
@@ -4138,7 +4158,7 @@ class Sonaar_Music_Widget extends WP_Widget{
                                     $track_title = apply_filters('srmp3_track_title', $track_title, $mp3_id, $audioSrc);
 
                                     $track_artist = ( isset( $mp3_metadata['artist'] ) && $mp3_metadata['artist'] !== '' )? $mp3_metadata['artist'] : false;
-                                    $album_title = ( isset( $mp3_metadata['album'] ) && $mp3_metadata['album'] !== '' )? $mp3_metadata['album'] : get_the_title($a->ID);
+                                    $album_title = ( isset( $mp3_metadata['album'] ) && $mp3_metadata['album'] !== '' )? $mp3_metadata['album'] : html_entity_decode(get_the_title($a->ID), ENT_QUOTES, 'UTF-8');
                                     $track_length = ( isset( $mp3_metadata['length_formatted'] ) && $mp3_metadata['length_formatted'] !== '' )? $mp3_metadata['length_formatted'] : false;
                                     $showLoading = true;
                                 break;
@@ -4774,8 +4794,8 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
             if (!$feed){
                 return;
             }
-            $playlist_name = (string) $feed->channel->title;
-            $playlist_image = isset($feed->channel->image) ? (string) $feed->channel->image->url : '';
+            $playlist_name = isset($feed->channel->title) ? sanitize_text_field((string) $feed->channel->title) : '';
+            $playlist_image = isset($feed->channel->image) ? esc_url_raw((string) $feed->channel->image->url) : '';
 
             $playlist = [
                 'playlist_name' => $playlist_name,
@@ -4818,18 +4838,19 @@ public function importFile($import_file, $a = null, $combinedtracks = false, $rs
                     }
                 }
 
-                $audioSrc = isset($item->enclosure) ? (string) $item->enclosure['url'] : '';
+                $audioSrc = isset($item->enclosure) ? esc_url((string) $item->enclosure['url']) : '';
 
+                $track_title = isset($item->title) ? sanitize_text_field((string) $item->title) : '';
                 $track = [
                     'id' => '',
                     'mp3' =>  $audioSrc,
                     'loading' => true,
-                    'track_title' => isset($item->title) ? (string) $item->title : '',
-                    'track_artist' => isset($item->itunes_author) ? (string) $item->itunes_author : '',
+                    'track_title' => esc_html($track_title),
+                    'track_artist' => isset($item->itunes_author) ? sanitize_text_field((string) $item->itunes_author) : '',
                     'length' => isset($episode_audio_file_duration) ? $episode_audio_file_duration : '',
                     'album_title' =>  $playlist_name,
-                    'poster' => isset($itunes_image['href']) ? (string) $itunes_image['href'] : $playlist_image,
-                    'published_date' => isset($item->pubDate) ? (string) $item->pubDate : '',
+                    'poster' => isset($itunes_image['href']) ? esc_url((string) $itunes_image['href']) : $playlist_image,
+                    'published_date' => isset($item->pubDate) ? esc_html((string) $item->pubDate) : '',
                     'track_pos' => $track_pos,
                     'release_date' => '',
                     'song_store_list' => '',
