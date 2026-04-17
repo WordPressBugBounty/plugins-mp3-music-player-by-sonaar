@@ -5,7 +5,7 @@ Donate link: https://sonaar.io
 Requires at least: 4.7
 Tested up to: 6.9
 Requires PHP: 5.6
-Stable tag: 5.11
+Stable tag: 5.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,16 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.12 =
+- Fix: Resolved a SSRF security vulnerability
+- Fix: PHP warning in wp-admin caused by accessing array offset on null playlist
+- Fix: PHP warning regarding undefined array key "track_pos"
+- Fix: MiniPlayer not loading with pagination ON, shuffle ON, and lazy load OFF
+- Fix: Sticky Icecast metadata not updating when widget player is not selected
+- Fix: Filter init when search and field columns are disabled
+- Fix: Lyrics | Karaoke Mode issue
+- Tweak: Icecast support for Airtime Pro JSON
+
 = 5.11 =
 - Fix: Waveform width issue caused by css from third party themes or plugins
 - Fix: PHP error with RSS feed as source in some condition

@@ -879,7 +879,14 @@ class Sonaar_Music_Widget extends WP_Widget{
             $trackLinkedToPost = ( isset( $track['sourcePostID'] ) && $this->getOptionValue('post_link') && ( get_post_type() != 'product' || isset($this->shortcodeParams['post_link']) && filter_var($this->shortcodeParams['post_link'], FILTER_VALIDATE_BOOLEAN) ) ) ? get_permalink($track['sourcePostID']) : false; //Disable post link if the widget is used in a product page, except if the "post_link" option is set to true in the widget settings
             $trackTitle = esc_html($track['track_title']);
             $trackTitle .= ( Sonaar_Music::get_option('show_artist_name', 'srmp3_settings_general') )?  '<span class="srp_trackartist">' . esc_html($artistSeparator_string) . esc_html($track['track_artist']) .'</span>': '';
-            $noteButton =  $this->addNoteButton($track['sourcePostID'], $track['track_pos'], $trackTitle, $trackdescEscapedValue, $excerptTrimmed, $track_desc_postcontent ); 
+            $noteButton = $this->addNoteButton(
+                $track['sourcePostID'],
+                $track['track_pos'] ?? 0,
+                $trackTitle,
+                $trackdescEscapedValue,
+                $excerptTrimmed,
+                $track_desc_postcontent
+            );
             
             $playlistItemClass = (isset($trackdescEscapedValue) || $noteButton != null ) ? 'sr-playlist-item' : 'sr-playlist-item sr-playlist-item-flex';
             if( isset($track['user_has_purchased']) ){
@@ -2998,6 +3005,16 @@ class Sonaar_Music_Widget extends WP_Widget{
     }
     
     
+    // Check if an IP is within a given CIDR range
+    private function ip_in_range($ip, $range) {
+        list($subnet, $bits) = explode('/', $range);
+        $ip = ip2long($ip);
+        $subnet = ip2long($subnet);
+        $mask = -1 << (32 - $bits);
+        $subnet &= $mask;
+        return ($ip & $mask) === $subnet;
+    }
+    
     private function print_playlist_json() {
         $jsonData = array();
 
@@ -3039,7 +3056,39 @@ class Sonaar_Music_Widget extends WP_Widget{
         $audio_meta_field = !empty($_GET["audio_meta_field"]) ? $_GET["audio_meta_field"] : null;
         $repeater_meta_field = !empty($_GET["repeater_meta_field"]) ? $_GET["repeater_meta_field"] : null;
         $track_desc_postcontent = (isset($track_desc_postcontent)) ? $track_desc_postcontent : null;
+        
         $import_file = !empty($_GET["import_file"]) ? sanitize_url($_GET["import_file"]) : null;
+        if (!empty($import_file)) {
+            $parsed_url = wp_parse_url($import_file);
+            if (!isset($parsed_url['host'])) {
+                $import_file = null;
+            } else {
+                $host = $parsed_url['host'];
+
+                // Block localhost and private IPs
+                if (filter_var($host, FILTER_VALIDATE_IP)) {
+                    $ip = $host;
+                    $private_ranges = [
+                        '10.0.0.0/8',
+                        '172.16.0.0/12',
+                        '192.168.0.0/16',
+                        '127.0.0.0/8',
+                        '169.254.0.0/16',
+                    ];
+                    foreach ($private_ranges as $range) {
+                        if ($this->ip_in_range($ip, $range)) {
+                            $import_file = null;
+                            break;
+                        }
+                    }
+                } else {
+                    if (in_array(strtolower($host), ['localhost', '127.0.0.1'])) {
+                        $import_file = null;
+                    }
+                }
+            }
+        }
+
         $rss_items = !empty($_GET["rss_items"]) ?  intval($_GET["rss_items"]) : null;
         $rss_item_title = !empty($_GET["rss_item_title"]) ? sanitize_text_field($_GET["rss_item_title"]) : null;
         $isPlayer_Favorite = !empty($_GET["is_favorite"]) ? sanitize_text_field($_GET["is_favorite"]) : null;
@@ -3052,6 +3101,7 @@ class Sonaar_Music_Widget extends WP_Widget{
         wp_send_json($playlist);
         
     }
+    
     private function findData($arr, $id, &$results = []){
         foreach ($arr as $data) {           
             if ( is_array($data) ){
@@ -4739,13 +4789,13 @@ class Sonaar_Music_Widget extends WP_Widget{
                 $tracks = array_reverse($tracks); //reverse tracklist order option
             }
         }
-
         if(!$playlist){
-            $playlist['playlist_name'] = $title;
-            if ( empty($playlist['playlist_name']) ) $playlist['playlist_name'] = "";
-            $playlist['tracks'] = $tracks;
-            if ( empty($playlist['tracks']) ) $playlist['tracks'] = array();
+            $playlist = [];
+            $playlist['playlist_name'] = $title ?: "";
+            $playlist['tracks'] = !empty($tracks) ? $tracks : [];
         }
+
+
        /* $end_time = microtime(true);
         $elapsed_time = $end_time - $start_time;
         echo "$x cta proceeded. ";
@@ -4767,42 +4817,68 @@ class Sonaar_Music_Widget extends WP_Widget{
     }
 
 public function importFile($import_file, $a = null, $combinedtracks = false, $rss_items = -1, $rss_item_title = null, $isPlayer_Favorite = null, $favoriteList = null ){
+      
       $upload_dir = wp_get_upload_dir();
       $peaks_dir = Sonaar_Music::get_peak_dir();
-      // Load file contents into a string variable
+
       $wc_add_to_cart = (isset($a)) ? $this->wc_add_to_cart($a->ID) : false;
       $wc_buynow_bt   = (isset($a)) ? $this->wc_buynow_bt($a->ID) : false;
       $is_variable_product = ($wc_add_to_cart == 'true' || $wc_buynow_bt == 'true' ) ? $this->is_variable_product($a->ID) : '';
                   
-      $album_tracks = false; // to avoid the next loop below
+      $album_tracks = false;
 
       $json_file = $import_file;
 
       try {
-        if (strtolower(substr($json_file, -4)) === '.csv') {
+
+        // SSRF FIX START ----------------------------
+
+        // Validate URL
+        $validated_url = esc_url_raw($json_file);
+        $parsed = wp_parse_url($validated_url);
+
+        if (!$validated_url || !isset($parsed['scheme']) || !in_array($parsed['scheme'], ['http','https']) || empty($parsed['host'])) {
+            return false;
+        }
+
+        // Block obvious local hosts
+        $blocked_hosts = ['localhost', '127.0.0.1', '::1'];
+        if (in_array($parsed['host'], $blocked_hosts)) {
+            return false;
+        }
+
+        // Resolve host → IP
+        $ip = gethostbyname($parsed['host']);
+        if (!$ip || !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+            return false;
+        }
+
+        // Fetch remote content securely
+        $response = wp_remote_get($validated_url, [
+            'timeout' => 10,
+            'redirection' => 3,
+            'reject_unsafe_urls' => true,
+        ]);
+
+        if (is_wp_error($response)) {
+            return false;
+        }
+
+        $json_file = wp_remote_retrieve_body($response);
+
+        // SSRF FIX END ----------------------------
+
+
+        if (strtolower(substr($validated_url, -4)) === '.csv') {
             $fileType = 'csv';
-        } else if (strtolower(substr($json_file, -5)) === '.json') {
+        } else if (strtolower(substr($validated_url, -5)) === '.json') {
             $fileType = 'json';
         } else {
             $fileType = 'rss';
         }
-        // Read the contents of the JSON file
-        $arrContextOptions=array(
-            "ssl"=>array(
-                "verify_peer"=>false,
-                "verify_peer_name"=>false,
-            ),
-        );  
-        $json_file = file_get_contents($json_file, false, stream_context_create($arrContextOptions));
-        if (current_user_can('manage_options') && $json_file === false) {
-            $error = "<p style='color:red;'>Notice to admin: Unable to open the stream for URL - <a href='" . esc_url($import_file) . "' target='_blank'>" .  esc_url($import_file) . "</a>";
 
-            if (ini_get('allow_url_fopen') == false) {
-                $error .= "<br><strong>allow_url_fopen</strong> is disabled on your server. Contact your hosting provider to enable it in your php setting";
-            }
-            if (extension_loaded('openssl') == false) {
-                $error .= "<br><strong>openssl</strong> extension is not loaded. Make sure your website is secure (HTTPS) before loading an external feed. Contact your hosting provider.";
-            }
+        if (current_user_can('manage_options') && empty($json_file)) {
+            $error = "<p style='color:red;'>Notice to admin: Unable to open the stream for URL - <a href='" . esc_url($import_file) . "' target='_blank'>" .  esc_url($import_file) . "</a>";
             $error .="</p>";
             echo $error;
         }

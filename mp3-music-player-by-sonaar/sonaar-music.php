@@ -16,7 +16,7 @@
  * Plugin Name:       MP3 Audio Player by Sonaar
  * Plugin URI:        https://sonaar.io/mp3-audio-player-pro/?utm_source=Sonaar+Music+Free+Plugin&utm_medium=plugin
  * Description:       The most popular and complete Music & Podcast Player for WordPress.
- * Version:           5.11
+ * Version:           5.12
  * Author:            Sonaar Music
  * Author URI:        https://sonaar.io/?utm_source=Sonaar%20Music%20Free%20Plugin&utm_medium=plugin
  * License:           GPL-2.0+
@@ -30,8 +30,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define('SRMP3_VERSION', '5.11'); // important to avoid cache issues on update
-define('SRMP3_PRO_MIN_VERSION', '5.11'); // Minimum pro version required
+define('SRMP3_VERSION', '5.12'); // important to avoid cache issues on update
+define('SRMP3_PRO_MIN_VERSION', '5.12'); // Minimum pro version required
 if ( !defined( 'SRMP3_DIR_PATH' ) ) {
     define( 'SRMP3_DIR_PATH', plugin_dir_path( __FILE__ ) );
 }
@@ -222,45 +222,39 @@ function load_track_note_ajax_callback() {
 }
 
 add_action('wp_ajax_load_lyrics_ajax', 'load_lyrics_ajax_callback');
-
+add_action('wp_ajax_nopriv_load_lyrics_ajax', 'load_lyrics_ajax_callback');
 function load_lyrics_ajax_callback() {
-    check_ajax_referer('sonaar_music_ajax_nonce', 'nonce');
-
-    if (!current_user_can('manage_options')) {
-        wp_send_json_error('Permission denied');
-    }
+    check_ajax_referer('sonaar_music_ajax_nonce', 'nonce'); 
 
     $post_id = absint($_POST['post-id']);
-    if (!$post_id) {
-        wp_send_json_error('Invalid post ID');
-    }
-
     $track_position = isset($_POST['track-position']) ? absint($_POST['track-position']) : null;
 
     $ttml_content = get_post_meta($post_id, 'sr_sonaar_tts_post_ttml', true);
     $postmeta = get_post_meta($post_id, 'alb_tracklist', true);
 
-    if (
-        $ttml_content ||
-        ($track_position !== null && isset($postmeta[$track_position]['track_lyrics']))
-    ) {
+    if (($track_position !== null && isset($postmeta[$track_position]['track_lyrics'])) || $ttml_content) {
         $ttml_content = $ttml_content ?: $postmeta[$track_position]['track_lyrics'];
 
-        if (!filter_var($ttml_content, FILTER_VALIDATE_URL)) {
-            wp_send_json_error('Invalid URL');
+        // SSRF Vérification
+        $allowed_hosts = [ parse_url(home_url(), PHP_URL_HOST) ];
+        $ttml_host = parse_url($ttml_content, PHP_URL_HOST);
+
+        if (!in_array($ttml_host, $allowed_hosts)) {
+            echo wp_json_encode(array('error' => 'External URLs not allowed'));
+            wp_die();
         }
 
-        $response = wp_safe_remote_get($ttml_content, array(
-            'timeout' => 5,
-        ));
+        $response = wp_safe_remote_get($ttml_content, array('sslverify' => true));
 
         if (is_wp_error($response)) {
-            wp_send_json_error($response->get_error_message());
+            echo wp_json_encode(array('error' => $response->get_error_message()));
+        } else {
+            $body = wp_remote_retrieve_body($response);
+            echo wp_json_encode($body); 
         }
 
-        echo wp_json_encode(wp_remote_retrieve_body($response));
     } else {
-        wp_send_json_error('Lyrics not found');
+        echo wp_json_encode(array('error' => 'The key "track_lyrics" is not set or is undefined.'));
     }
 
     wp_die();
