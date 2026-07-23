@@ -5,7 +5,7 @@ Donate link: https://sonaar.io
 Requires at least: 4.7
 Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 5.13
+Stable tag: 5.13.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -342,6 +342,10 @@ Yes, with the pro version, you can click on the 'Add to Favorite' icon to store 
 10. Shortcode Builder: Create, Import and Customize audio players using shortcodes in real-time
 
 == Changelog ==
+= 5.13.1 =
+- Hotfix: Share button issue when playlist is set to reverse mode.
+- Hotfix: Favorite button issue when playlist is set to reverse mode.
+
 = 5.13 =
 - Fix: Remember Track Progress no longer stores an incorrect playback position 
 - Fix: Download links now work correctly when media library files are hosted on an external server 

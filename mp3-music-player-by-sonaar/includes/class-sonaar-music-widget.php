@@ -918,7 +918,10 @@ class Sonaar_Music_Widget extends WP_Widget{
             data-peakFile-allow="'. esc_html((isset($track['peak_allow_frontend'])) ? $track['peak_allow_frontend'] : '') . '"
             data-is-preview="'. esc_html((isset($track['isPreview'])) ? $track['isPreview'] : '') . '"
             data-track-lyric="'. esc_html((isset($track['has_lyric'])) ? $track['has_lyric'] : '') . '"';
-            //error_log('track peaks == ' . $track['peaks']);
+            if( array_key_exists( 'reverse_post_tracklist', $track) && $track['reverse_post_tracklist'] === true ){
+                 $format_playlist .= ' data-reverse="1"';
+                 $format_playlist .= ( array_key_exists( 'post_track_count', $track) && $track['post_track_count'] !== '')? ' data-post_track_count="' . esc_attr( $track['post_track_count'] ) . '"' : '';
+            }
             $format_playlist .= ( array_key_exists( 'icecast_json', $track) && $track['icecast_json'] !== '')? ' data-icecast_json="' . esc_attr( $track['icecast_json'] ) . '"' : '';
             $format_playlist .= ( array_key_exists( 'icecast_mount', $track) && $track['icecast_mount'] !== '')? ' data-icecast_mount="' . esc_attr( $track['icecast_mount'] ) . '"' : '';
             $format_playlist .= ( array_key_exists( 'icecast_json', $track) && $track['icecast_json'] !== '' && $track['optional_poster'] != false)? ' data-optional_poster="true"' : ''; //if icecast we need to display the optional poster if no image is provided
@@ -4682,8 +4685,13 @@ class Sonaar_Music_Widget extends WP_Widget{
                         if(isset($thumb_id)){
                             $album_tracks[$i]["track_image_id"] = $thumb_id;
                         }
-                        $album_tracks[$i]["track_pos"] = $i ;
-                        //$album_tracks[$i]["track_pos"] = ( get_post_meta( $a->ID, 'reverse_post_tracklist', true) )? count($album_tracks) - ($i + 1) : $i ;
+                        $album_tracks[$i]["track_pos"] = ( get_post_meta( $a->ID, 'reverse_post_tracklist', true) )? count($album_tracks) - ($i + 1) : $i ;
+
+                        if( get_post_meta( $a->ID, 'reverse_post_tracklist', true) ){ 
+                            $album_tracks[$i]['reverse_post_tracklist'] = true; 
+                            $album_tracks[$i]['post_track_count'] = count($album_tracks); 
+                        } 
+
                         $album_tracks[$i]["release_date"] = get_post_meta($a->ID, 'alb_release_date', true);
                         $album_tracks[$i]["song_store_list"] = $song_store_list;
                         $album_tracks[$i]["has_song_store"] = $has_song_store;
