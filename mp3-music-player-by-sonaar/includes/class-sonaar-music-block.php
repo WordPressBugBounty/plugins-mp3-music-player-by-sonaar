@@ -29,6 +29,10 @@ class Sonaar_Block {
     
     function sonaar_block_editor_scripts() {
 
+	    if ( ! is_admin() ) {
+        	return;
+    	}
+	
 		$sonaar_mp3player = 'sonaar-music-mp3player';
 
         // Register Script for elementor
