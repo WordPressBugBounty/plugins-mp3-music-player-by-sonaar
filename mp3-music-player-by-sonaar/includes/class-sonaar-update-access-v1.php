@@ -16,6 +16,16 @@ class Sonaar_Update_Access_V1 {
         return is_string( $key ) && 'noLicense' !== $key ? trim( $key ) : '';
     }
 
+    private static function license_cache( $type ) {
+        $cached = get_site_transient( 'plugin' === $type ? 'sonaar_music_licence' : 'sonaar_licence' );
+        if ( is_array( $cached ) && isset( $cached['response'] ) &&
+            ( is_array( $cached['response'] ) || is_object( $cached['response'] ) ) ) {
+            // Legacy clients cached JSON objects, including nested license_info objects.
+            $cached['response'] = json_decode( wp_json_encode( $cached['response'] ), true );
+        }
+        return $cached; // Normalize for this request without rewriting the stored license.
+    }
+
     public static function has_license( $type ) {
         return '' !== self::key( $type );
     }
@@ -47,7 +57,7 @@ class Sonaar_Update_Access_V1 {
         if ( is_array( $denial ) && isset( $denial['key_hash'], $denial['reason'] ) && hash( 'sha256', $key ) === $denial['key_hash'] ) {
             $reason = $denial['reason'];
         }
-        $cached = get_site_transient( 'plugin' === $type ? 'sonaar_music_licence' : 'sonaar_licence' );
+        $cached = self::license_cache( $type );
         if ( '' === $reason && is_array( $cached ) && isset( $cached['licenceKey'], $cached['response'] ) && $key === $cached['licenceKey'] && is_array( $cached['response'] ) ) {
             $response = $cached['response'];
             if ( ! empty( $cached['verified'] ) && isset( $response['success'], $response['error'] ) && false === $response['success'] ) {
@@ -73,8 +83,8 @@ class Sonaar_Update_Access_V1 {
             return $error;
         }
         $key = self::key( $type );
-        $cached = get_site_transient( 'plugin' === $type ? 'sonaar_music_licence' : 'sonaar_licence' );
-        $cached_valid = ! $error && is_array( $cached ) && isset( $cached['response']['success'] ) && true === $cached['response']['success'] && Sonaar_License_Client_V1::cached_license( $cached, $key );
+        $cached = self::license_cache( $type );
+        $cached_valid = ! $error && is_array( $cached ) && isset( $cached['response'] ) && is_array( $cached['response'] ) && isset( $cached['response']['success'] ) && true === $cached['response']['success'] && Sonaar_License_Client_V1::cached_license( $cached, $key );
         if ( isset( self::$verifying[$type] ) ) {
             return $error ? $error : ( $cached_valid ? false : new WP_Error( 'sonaar_unavailable', 'Could not verify update access. Your saved license has not been changed. Please try again later.' ) );
         }

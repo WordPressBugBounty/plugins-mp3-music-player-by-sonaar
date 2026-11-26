@@ -68,6 +68,12 @@ class Sonaar_Music_Widget extends WP_Widget{
     */
     public function widget ( $args, $instance ){
             $instance = apply_filters( 'srmp3_add_shortcode_params', $instance );
+            // AJAX can supply the entire instance. Only reuse meta sources that
+            // were explicitly exposed by a server-rendered player.
+            if ( ! $this->authorize_audio_meta_source( $instance ) ) {
+                wp_send_json_error( array( 'message' => 'Invalid audio meta source.' ), 403 );
+                return;
+            }
             $this->shortcodeParams = wp_parse_args( (array) $instance, self::$widget_defaults );
             $this->sr_playlist_cpt =  (defined( 'SR_PLAYLIST_CPT' )) ? SR_PLAYLIST_CPT : 'sr_playlist';
             $widget_id = (isset($this->shortcodeParams['id']))? $this->shortcodeParams['id']: $args["widget_id"];
@@ -1807,19 +1813,32 @@ class Sonaar_Music_Widget extends WP_Widget{
 
         $feed = str_replace('&', 'amp;', $feed); //replace & with amp; to avoid conflict with json
         $feed_title = str_replace( "'", "apos;", $feed_title ); //replace ' with apos; to avoid conflict with json
-        $feed_title_raw = rawurlencode(wp_unslash($feed_title));
+        $feed_title_raw = wp_unslash($feed_title);
         
         //We set the json file in attribute to be used in the sticky.
         //$category = ( isset( $this->shortcodeParams['category'] ) ) ? $this->shortcodeParams['category'] : false;
         if ( $category ) {
           $albums = '';
         }
-        $json_file = home_url('?load=playlist.json&amp;title='.$title.'&amp;albums='.$albums.'&amp;category='.$category.'&amp;posts_not_in='.$posts_not_in.'&amp;category_not_in='.$category_not_in.'&amp;author='.$author.'&amp;feed_title='.$feed_title_raw.'&amp;feed='.$feed.'&amp;feed_img='.$feed_img.'&amp;el_widget_id='.$el_widget_id.'&amp;artwork='.$artwork .'&amp;posts_per_pages='.$posts_per_pages .'&amp;all_category='.$all_category .'&amp;single_playlist='.$single_playlist .'&amp;reverse_tracklist='. $this->getOptionValue('reverse_tracklist') .'&amp;audio_meta_field='.$audio_meta_field .'&amp;repeater_meta_field='.$repeater_meta_field .'&amp;import_file='.$import_file .'&amp;rss_items='.$rss_items .'&amp;rss_item_title='.$rss_item_title .'&amp;is_favorite=' . $isPlayer_Favorite .'&amp;is_recentlyplayed=' . $isPlayer_recentlyPlayed );
+        $json_params = array(
+            'load' => 'playlist.json', 'title' => $title, 'albums' => $albums,
+            'category' => $category, 'posts_not_in' => $posts_not_in,
+            'category_not_in' => $category_not_in, 'author' => $author,
+            'feed_title' => $feed_title_raw, 'feed' => $feed, 'feed_img' => $feed_img,
+            'el_widget_id' => $el_widget_id, 'artwork' => $artwork,
+            'posts_per_pages' => $posts_per_pages, 'all_category' => $all_category,
+            'single_playlist' => $single_playlist,
+            'reverse_tracklist' => $this->getOptionValue('reverse_tracklist'),
+            'audio_meta_field' => $audio_meta_field, 'repeater_meta_field' => $repeater_meta_field,
+            'import_file' => $import_file, 'rss_items' => $rss_items,
+            'rss_item_title' => $rss_item_title, 'is_favorite' => $isPlayer_Favorite,
+            'is_recentlyplayed' => $isPlayer_recentlyPlayed,
+        );
        
         $jsonExtraParamNames = ['srp_player_id','srp_meta','srp_search','srp_page','srp_order']; //Add params from ajaxInstance in the json file
         foreach ($jsonExtraParamNames as $name) {
             if ( isset($this->shortcodeParams[$name]) && $this->shortcodeParams[$name] != '') {
-                $json_file .= "&" . $name . "=" . urlencode($this->shortcodeParams[$name]);
+                $json_params[$name] = $this->shortcodeParams[$name];
             }
         }
         // set default order if not specified
@@ -1834,10 +1853,12 @@ class Sonaar_Music_Widget extends WP_Widget{
             }else{
                 $ordering = $this->shortcodeParams['order'];
             }
-            $json_file .= "&srp_order=" . $this->shortcodeParams['orderby'] . '_' . $ordering;
+            $json_params['srp_order'] = $this->shortcodeParams['orderby'] . '_' . $ordering;
 
         }
 
+
+        $json_file = $this->build_playlist_json_url( $json_params );
 
         $output = '';
        
@@ -3030,7 +3051,74 @@ class Sonaar_Music_Widget extends WP_Widget{
         return ($ip & $mask) === $subnet;
     }
     
+    /**
+     * Sign a flat set of source parameters using the site's secret, not a
+     * public visitor nonce. Stable signatures also work with cached pages.
+     */
+    private function audio_meta_signature( $params, $context ) {
+        $values = array();
+        foreach ( $params as $key => $value ) {
+            if ( ! is_scalar( $value ) && null !== $value ) {
+                return false;
+            }
+            $values[$key] = (string) $value;
+        }
+        ksort( $values );
+        return hash_hmac( 'sha256', $context . ':' . serialize( $values ), wp_salt( 'auth' ) );
+    }
+
+    /**
+     * Carry the configured audio/repeater pair through Pro AJAX reloads.
+     * A public AJAX nonce alone does not authorize choosing new meta keys.
+     */
+    private function authorize_audio_meta_source( &$instance ) {
+        $source = array(
+            'audio_meta_field' => $instance['audio_meta_field'] ?? '',
+            'repeater_meta_field' => $instance['repeater_meta_field'] ?? '',
+        );
+        if ( '' === $source['audio_meta_field'] && '' === $source['repeater_meta_field'] ) {
+            return true;
+        }
+        $signature = $this->audio_meta_signature( $source, 'srmp3-meta-source' );
+        if ( false === $signature ) {
+            return false;
+        }
+        $is_dynamic_request = wp_doing_ajax() || ( defined( 'REST_REQUEST' ) && REST_REQUEST );
+        if ( $is_dynamic_request && ! current_user_can( 'manage_options' ) ) {
+            $provided = $instance['audio_meta_source_signature'] ?? '';
+            return is_string( $provided ) && hash_equals( $signature, $provided );
+        }
+        $instance['audio_meta_source_signature'] = $signature;
+        return true;
+    }
+
+    /** Build an encoded URL so values cannot inject additional signed keys. */
+    private function build_playlist_json_url( $params ) {
+        foreach ( $params as $key => $value ) {
+            $params[$key] = is_scalar( $value ) ? (string) $value : '';
+        }
+        $url = home_url( '?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 ) );
+        if ( '' !== $params['audio_meta_field'] || '' !== $params['repeater_meta_field'] ) {
+            // Include query arguments added by home_url filters (e.g. language).
+            wp_parse_str( wp_parse_url( $url, PHP_URL_QUERY ), $query );
+            $url .= '&audio_meta_signature=' . $this->audio_meta_signature( $query, 'srmp3-meta-playlist' );
+        }
+        return $url;
+    }
+
     private function print_playlist_json() {
+        // Validate before any query or meta read. Bind the key pair and the
+        // entire playlist selection, so a signature cannot target other posts.
+        if ( ! empty( $_GET['audio_meta_field'] ) || ! empty( $_GET['repeater_meta_field'] ) ) {
+            $params = wp_unslash( $_GET );
+            $provided = $params['audio_meta_signature'] ?? '';
+            unset( $params['audio_meta_signature'] );
+            $expected = $this->audio_meta_signature( $params, 'srmp3-meta-playlist' );
+            if ( false === $expected || ! is_string( $provided ) || ! hash_equals( $expected, $provided ) ) {
+                wp_send_json_error( array( 'message' => 'Invalid audio meta source.' ), 403 );
+                return;
+            }
+        }
         $jsonData = array();
 
         if ( ! empty($_GET["albums"]) ){
@@ -3068,8 +3156,8 @@ class Sonaar_Music_Widget extends WP_Widget{
         $author =  !empty($_GET["author"]) ? sanitize_text_field($_GET["author"]) : null;
         $all_category = !empty($_GET["all_category"]) ? true : null;
         $reverse_tracklist = !empty($_GET["reverse_tracklist"]) ? true : false;
-        $audio_meta_field = !empty($_GET["audio_meta_field"]) ? $_GET["audio_meta_field"] : null;
-        $repeater_meta_field = !empty($_GET["repeater_meta_field"]) ? $_GET["repeater_meta_field"] : null;
+        $audio_meta_field = !empty($_GET["audio_meta_field"]) ? wp_unslash($_GET["audio_meta_field"]) : null;
+        $repeater_meta_field = !empty($_GET["repeater_meta_field"]) ? wp_unslash($_GET["repeater_meta_field"]) : null;
         $track_desc_postcontent = (isset($track_desc_postcontent)) ? $track_desc_postcontent : null;
         
         $import_file = !empty($_GET["import_file"]) ? sanitize_url($_GET["import_file"]) : null;
